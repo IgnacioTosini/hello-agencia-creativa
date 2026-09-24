@@ -1,0 +1,96 @@
+@use "@/styles/variables" as *;
+
+.projectCard {
+  overflow: hidden;
+  border: 0.0625rem solid rgba($hero-border-color, 0.82);
+  border-radius: 1rem;
+  background: rgba($hero-surface-color, 0.76);
+  box-shadow: 0 1.5rem 3rem -2.5rem rgba($color-text-tertiary, 0.4);
+
+  .projectCardImage {
+    position: relative;
+    display: block;
+    aspect-ratio: 1.6;
+    overflow: hidden;
+    background: $hero-border-color;
+
+    img {
+      object-fit: cover;
+      transition: transform 320ms ease;
+    }
+
+    .projectCardImageEmpty {
+      display: grid;
+      height: 100%;
+      place-items: center;
+      color: $color-text-secondary;
+      font-size: $font-size-small;
+    }
+    &:focus-visible {
+      outline: 0.1875rem solid $border-color-secondary;
+      outline-offset: 0.25rem;
+    }
+  }
+
+  &:hover .projectCardImage img {
+    transform: scale(1.04);
+  }
+
+  .projectCardBody {
+    display: flex;
+    min-height: 15.75rem;
+    flex-direction: column;
+    padding: 1.25rem;
+  }
+
+  .projectCardMeta {
+    display: flex;
+    justify-content: space-between;
+    color: $color-text-tertiary;
+    font-size: $font-size-small;
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  h3 {
+    margin-top: 1.125rem;
+    color: $color-text;
+    font-size: 1.5rem;
+    font-weight: $font-weight-semibold;
+    line-height: 1.2;
+  }
+  .projectCardClient {
+    margin-top: 0.375rem;
+    color: $color-text-secondary;
+    font-size: $font-size-medium;
+  }
+  .projectCardDescription {
+    margin-top: 1.25rem;
+    color: rgba($color-text, 0.66);
+    font-size: $font-size-medium;
+    line-height: 1.65;
+  }
+  .projectCardLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: fit-content;
+    margin-top: auto;
+    padding-top: 1.25rem;
+    color: $color-text-tertiary;
+    font-size: $font-size-normal;
+    font-weight: $font-weight-medium;
+    text-decoration: none;
+  }
+  .projectCardLink span {
+    font-size: $font-size-medium;
+    transition: transform 180ms ease;
+  }
+  .projectCardLink:hover span {
+    transform: translateX(0.1875rem);
+  }
+  .projectCardLink:focus-visible {
+    outline: 0.1875rem solid $border-color-secondary;
+    outline-offset: 0.25rem;
+  }
+}

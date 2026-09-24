@@ -1,0 +1,66 @@
+@use "@/styles/variables" as *;
+
+.process {
+  padding: 3rem max(2rem, calc((100% - 60.75rem) / 2)) 6rem;
+  background:
+    radial-gradient(
+      ellipse at 100% 45%,
+      rgba($hero-accent-color, 0.15),
+      transparent 43%
+    ),
+    radial-gradient(
+      ellipse at 0% 80%,
+      rgba($color-text-tertiary, 0.1),
+      transparent 42%
+    ),
+    $hero-background-color;
+
+  .processGrid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .processStep {
+    min-height: 11.625rem;
+    padding: 1.25rem;
+    border: 0.0625rem solid $hero-border-color;
+    border-radius: 1rem;
+    background: rgba($hero-surface-color, 0.64);
+
+    .processStepNumber {
+      color: rgba($color-text-tertiary, 0.42);
+      font-size: 2rem;
+      font-weight: $font-weight-semibold;
+      letter-spacing: -0.0625rem;
+      line-height: 1;
+    }
+    h3 {
+      margin-top: 1.25rem;
+      color: $color-text;
+      font-size: $font-size-medium;
+      font-weight: $font-weight-semibold;
+      line-height: 1.35;
+    }
+    .processStepDescription {
+      margin-top: 0.75rem;
+      color: $color-text-secondary;
+      font-size: $font-size-small;
+      line-height: 1.55;
+    }
+  }
+
+  @media (max-width: 47.5rem) {
+    padding: 2rem 1.5rem 4.5rem;
+    .processGrid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .processGrid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

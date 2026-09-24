@@ -1,0 +1,338 @@
+@use "@/styles/variables" as *;
+
+.adminServices {
+  .adminHeader {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+
+    p {
+      color: $color-text-tertiary;
+      font-size: $font-size-small;
+      font-weight: $font-weight-semibold;
+    }
+
+    h1 {
+      margin-top: 0.5rem;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -0.09375rem;
+    }
+  }
+
+  .adminPrimaryButton {
+    display: inline-flex;
+    min-height: 2.75rem;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.125rem;
+    border: 0;
+    border-radius: 62.4375rem;
+    background: $color-primary-button;
+    color: $hero-surface-color;
+    cursor: pointer;
+    font: inherit;
+    font-size: $font-size-normal;
+    font-weight: $font-weight-semibold;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease;
+
+    &:hover {
+      box-shadow: 0 0.75rem 1.5rem -0.75rem rgba($color-primary-button, 0.7);
+      transform: translateY(-0.125rem);
+    }
+  }
+
+  .adminCrudList {
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    gap: 1rem;
+    margin-top: 1.5rem;
+
+    article {
+      display: grid;
+      grid-template-columns: 3rem minmax(0, 1fr) auto auto auto;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem;
+      border: 0.0625rem solid $hero-border-color;
+      border-radius: 1rem;
+      background: rgba($hero-surface-color, 0.76);
+      box-shadow: 0 1.25rem 2.5rem -2rem rgba($color-text-tertiary, 0.3);
+
+      > button {
+        min-height: 2.375rem;
+        flex: 0 0 auto;
+        padding: 0.5rem 0.875rem;
+        border: 0.0625rem solid $hero-border-color;
+        border-radius: 62.4375rem;
+        background: rgba($hero-surface-color, 0.68);
+        color: $color-text;
+        cursor: pointer;
+        font: inherit;
+        font-size: $font-size-small;
+        white-space: nowrap;
+        transition:
+          border-color 180ms ease,
+          color 180ms ease;
+
+        &:hover {
+          border-color: $color-primary-button;
+          color: $color-primary-button;
+        }
+      }
+    }
+  }
+
+  .adminCrudIcon {
+    display: grid;
+    width: 3rem;
+    height: 3rem;
+    place-items: center;
+    border-radius: 0.875rem;
+    background: rgba($color-primary-button, 0.1);
+    color: $color-primary-button;
+    font-size: 1.5rem;
+  }
+
+  .adminCrudInfo {
+    min-width: 0;
+
+    h2 {
+      font-size: $font-size-medium;
+      letter-spacing: -0.025rem;
+    }
+
+    p,
+    small {
+      display: block;
+      margin-top: 0.375rem;
+      color: $color-text-secondary;
+      font-size: $font-size-small;
+    }
+
+    p {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .adminCrudStatus {
+    color: $color-text-secondary;
+    font-size: $font-size-small;
+    font-weight: $font-weight-semibold;
+
+    &.isActive {
+      color: $hero-accent-color;
+    }
+  }
+
+  .adminEmptyState {
+    padding: 3rem 1.5rem;
+    border: 0.0625rem dashed $hero-border-color;
+    border-radius: 1rem;
+    color: $color-text-secondary;
+    text-align: center;
+  }
+
+  .adminModal {
+    position: fixed;
+    z-index: 20;
+    inset: 0;
+    display: grid;
+    overflow-y: auto;
+    place-items: center;
+    padding: 1.5rem;
+    background: rgba($color-text, 0.5);
+    backdrop-filter: blur(0.375rem);
+
+    form {
+      display: grid;
+      width: min(100%, 52rem);
+      max-height: calc(100vh - 3rem);
+      overflow-y: auto;
+      gap: 1.5rem;
+      padding: 2rem;
+      border: 0.0625rem solid rgba($hero-surface-color, 0.35);
+      border-radius: 1.25rem;
+      background: $hero-surface-color;
+      box-shadow: 0 2rem 4rem -2rem rgba($color-text, 0.6);
+
+      > header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+
+        p {
+          color: $color-primary-button;
+          font-size: $font-size-small;
+          font-weight: $font-weight-semibold;
+        }
+
+        h2 {
+          margin-top: 0.375rem;
+          font-size: clamp(1.5rem, 3vw, 2rem);
+        }
+
+        button {
+          display: grid;
+          width: 2.5rem;
+          height: 2.5rem;
+          flex: 0 0 auto;
+          place-items: center;
+          border: 0.0625rem solid $hero-border-color;
+          border-radius: 50%;
+          background: transparent;
+          color: $color-text;
+          cursor: pointer;
+          font: inherit;
+          font-size: 1.5rem;
+          line-height: 1;
+        }
+      }
+
+      .adminFormGrid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+
+        label {
+          display: grid;
+          align-content: start;
+          gap: 0.5rem;
+          color: $color-text;
+          font-size: $font-size-small;
+          font-weight: $font-weight-semibold;
+
+          &.fullWidth {
+            grid-column: 1 / -1;
+          }
+
+          small {
+            color: $color-text-secondary;
+            font-weight: $font-weight-regular;
+          }
+        }
+
+        input,
+        textarea {
+          width: 100%;
+          padding: 0.75rem 0.875rem;
+          border: 0.0625rem solid $hero-border-color;
+          border-radius: 0.75rem;
+          outline: none;
+          background: rgba($hero-background-color, 0.42);
+          color: $color-text;
+          font: inherit;
+          font-weight: $font-weight-regular;
+
+          &:focus {
+            border-color: $color-primary-button;
+            box-shadow: 0 0 0 0.1875rem rgba($color-primary-button, 0.12);
+          }
+        }
+
+        textarea {
+          min-height: 6.5rem;
+          max-height: 13rem;
+          resize: vertical;
+        }
+      }
+
+      > footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        padding-top: 0.25rem;
+
+        button:not(.adminPrimaryButton) {
+          min-height: 2.75rem;
+          padding: 0.75rem 1.125rem;
+          border: 0.0625rem solid $hero-border-color;
+          border-radius: 62.4375rem;
+          background: transparent;
+          color: $color-text;
+          cursor: pointer;
+          font: inherit;
+          font-weight: $font-weight-semibold;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 54rem) {
+    .adminCrudList {
+      article {
+        grid-template-columns: 3rem minmax(0, 1fr) auto auto;
+
+        .adminCrudStatus {
+          grid-column: 2;
+          justify-self: start;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 42rem) {
+    .adminHeader {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .adminCrudList {
+      article {
+        grid-template-columns: 3rem minmax(0, 1fr);
+
+        .adminCrudStatus,
+        > button {
+          grid-column: 2;
+          justify-self: start;
+        }
+
+        .adminCrudInfo p {
+          white-space: normal;
+        }
+      }
+    }
+
+    .adminModal {
+      padding: 0.75rem;
+
+      form {
+        max-height: calc(100vh - 1.5rem);
+        padding: 1.25rem;
+
+        .adminFormGrid {
+          grid-template-columns: 1fr;
+
+          label.fullWidth {
+            grid-column: auto;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .adminPrimaryButton {
+      width: 100%;
+    }
+
+    .adminModal {
+      form > footer {
+        flex-direction: column-reverse;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

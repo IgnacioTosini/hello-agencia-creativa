@@ -1,0 +1,223 @@
+@use "@/styles/variables" as *;
+
+.adminOverview {
+  .adminHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    p,
+    .adminSectionHeader p {
+      color: $color-text-tertiary;
+      font-size: $font-size-small;
+      font-weight: $font-weight-semibold;
+    }
+    h1 {
+      margin-top: 0.5rem;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -0.09375rem;
+    }
+  }
+
+  .adminStatus {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    border: 0.0625rem solid $hero-border-color;
+    border-radius: 62.4375rem;
+    background: rgba($hero-surface-color, 0.68);
+    color: $color-text-secondary;
+    font-size: $font-size-small;
+
+    i {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: $hero-accent-color;
+    }
+  }
+
+  .adminMetrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 3rem;
+
+    article {
+      padding: 1.25rem;
+      border: 0.0625rem solid $hero-border-color;
+      border-radius: 1rem;
+      background: rgba($hero-surface-color, 0.76);
+      box-shadow: 0 1.25rem 2.5rem -2rem rgba($color-text-tertiary, 0.35);
+
+      p {
+        color: $color-text-secondary;
+        font-size: $font-size-small;
+      }
+      strong {
+        display: block;
+        margin-top: 1rem;
+        font-size: 2rem;
+      }
+      span {
+        display: block;
+        margin-top: 0.5rem;
+        color: $hero-accent-color;
+        font-size: $font-size-small;
+      }
+    }
+  }
+
+  .adminSection {
+    margin-top: 3.5rem;
+
+    .adminSectionHeader {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+
+      h2 {
+        margin-top: 0.5rem;
+        font-size: 1.5rem;
+      }
+      > a {
+        color: $color-text-tertiary;
+        font-size: $font-size-small;
+        text-decoration: none;
+      }
+    }
+  }
+
+  .adminShortcuts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.25rem;
+
+    a {
+      display: grid;
+      min-width: 0;
+      grid-template-columns: 2rem minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      border: 0.0625rem solid $hero-border-color;
+      border-radius: 1rem;
+      background: rgba($hero-surface-color, 0.76);
+      box-shadow: 0 1.25rem 2.5rem -2rem rgba($color-text-tertiary, 0.35);
+      color: $color-text;
+      font-size: $font-size-normal;
+      font-weight: $font-weight-semibold;
+      text-decoration: none;
+      transition: transform 180ms ease;
+
+      .adminShortcutIcon {
+        display: grid;
+        width: 2rem;
+        height: 2rem;
+        place-items: center;
+        border-radius: 0.625rem;
+        background: rgba($color-text-tertiary, 0.1);
+        color: $color-text-tertiary;
+      }
+
+      .adminShortcutLabel {
+        min-width: 0;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+      }
+
+      .adminShortcutArrow {
+        display: block;
+        color: $color-text-tertiary;
+        font-size: $font-size-medium;
+        line-height: 1;
+      }
+
+      &:hover {
+        transform: translateY(-0.125rem);
+      }
+    }
+  }
+
+  .adminActivityList {
+    overflow: hidden;
+    margin-top: 1.25rem;
+    border: 0.0625rem solid $hero-border-color;
+    border-radius: 1rem;
+    background: rgba($hero-surface-color, 0.76);
+    box-shadow: 0 1.25rem 2.5rem -2rem rgba($color-text-tertiary, 0.35);
+
+    > div {
+      display: grid;
+      grid-template-columns: 0.625rem 1fr auto;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 0.0625rem solid $hero-border-color;
+      &:last-child {
+        border-bottom: 0;
+      }
+      p {
+        font-size: $font-size-normal;
+      }
+      small {
+        color: $color-text-secondary;
+        font-size: $font-size-small;
+      }
+
+      &.adminActivityEmpty {
+        grid-template-columns: 0.625rem 1fr;
+
+        p {
+          color: $color-text-secondary;
+        }
+      }
+    }
+
+    .activityDot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      &.purple {
+        background: $color-text-tertiary;
+      }
+      &.teal {
+        background: $hero-accent-color;
+      }
+      &.gray {
+        background: $color-text-secondary;
+      }
+    }
+  }
+
+  @media (max-width: 60rem) {
+    .adminMetrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .adminShortcuts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .adminHeader {
+      align-items: start;
+      flex-direction: column;
+    }
+    .adminMetrics,
+    .adminShortcuts {
+      grid-template-columns: 1fr;
+    }
+    .adminActivityList > div {
+      grid-template-columns: 0.625rem 1fr;
+      small {
+        grid-column: 2;
+      }
+    }
+  }
+}

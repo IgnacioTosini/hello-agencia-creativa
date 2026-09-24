@@ -1,0 +1,114 @@
+@use "@/styles/variables" as *;
+
+.services {
+  padding: 6.5rem max(2rem, calc((100% - 60.75rem) / 2)) 5.5rem;
+  background:
+    radial-gradient(
+      ellipse at 100% 30%,
+      rgba($hero-accent-color, 0.16),
+      transparent 37%
+    ),
+    radial-gradient(
+      ellipse at 15% 80%,
+      rgba($color-text-tertiary, 0.09),
+      transparent 42%
+    ),
+    $hero-background-color;
+
+  .servicesGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .serviceCard {
+    display: flex;
+    min-height: 15.75rem;
+    flex-direction: column;
+    padding: 1.5rem;
+    border: 0.0625rem solid rgba($hero-surface-color, 0.85);
+    border-radius: 1rem;
+    background: rgba($hero-surface-color, 0.72);
+    box-shadow: 0 1.25rem 2.5rem -2.25rem rgba($color-text-tertiary, 0.42);
+
+    .serviceIcon {
+      display: grid;
+      width: 2.375rem;
+      height: 2.375rem;
+      place-items: center;
+      border-radius: 0.75rem;
+      background: rgba($color-text-tertiary, 0.1);
+      color: $color-text-tertiary;
+
+      svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.7;
+      }
+    }
+
+    h3 {
+      margin-top: 1.25rem;
+      color: $color-text;
+      font-size: $font-size-medium-large;
+      font-weight: $font-weight-semibold;
+      line-height: 1.35;
+    }
+
+    p {
+      margin-top: 0.75rem;
+      color: $color-text-secondary;
+      font-size: $font-size-medium;
+      line-height: 1.55;
+    }
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.625rem;
+      width: fit-content;
+      margin-top: auto;
+      padding-top: 1rem;
+      color: $color-text-tertiary;
+      font-size: $font-size-medium;
+      font-weight: $font-weight-medium;
+      text-decoration: none;
+
+      span {
+        font-size: $font-size-medium;
+        transition: transform 180ms ease;
+      }
+
+      &:hover span {
+        transform: translateX(0.1875rem);
+      }
+
+      &:focus-visible {
+        outline: 0.1875rem solid $border-color-secondary;
+        outline-offset: 0.1875rem;
+      }
+    }
+  }
+
+  @media (max-width: 47.5rem) {
+    padding: 4rem 1.5rem;
+
+    .servicesGrid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .servicesGrid {
+      grid-template-columns: 1fr;
+    }
+
+    .serviceCard {
+      min-height: 11.5rem;
+    }
+  }
+}

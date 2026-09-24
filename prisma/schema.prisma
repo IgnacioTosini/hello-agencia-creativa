@@ -1,0 +1,331 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SiteContent {
+  id             String   @id @default("main")
+  homeSections   Json
+  contactBudgets Json
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("site_content")
+}
+
+// -------------------------
+// ENUMS
+// -------------------------
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ProjectCategory {
+  BRANDING
+  SOCIAL_MEDIA
+  CONTENT
+  CAMPAIGNS
+  GRAPHIC_DESIGN
+  PHOTO_VIDEO
+}
+
+enum ProjectImageType {
+  COVER
+  GALLERY
+  MOCKUP
+  BEFORE_AFTER
+}
+
+enum InquiryStatus {
+  NEW
+  CONTACTED
+  CLOSED
+}
+
+enum InquirySource {
+  CONTACT_FORM
+  DIAGNOSTIC
+  WHATSAPP
+  INSTAGRAM
+  OTHER
+}
+
+// -------------------------
+// PROJECT
+// -------------------------
+
+model Project {
+  id         String          @id @default(cuid())
+  title      String
+  slug       String          @unique
+  clientName String
+  year       Int
+  category   ProjectCategory
+
+  shortDescription String
+  description      String? @db.Text
+
+  challenge String? @db.Text
+  approach  String? @db.Text
+  solution  String? @db.Text
+  results   String? @db.Text
+
+  featured     Boolean       @default(false)
+  displayOrder Int           @default(0)
+  status       ProjectStatus @default(DRAFT)
+
+  instagramUrl String?
+  websiteUrl   String?
+  videoUrl     String?
+
+  metaTitle       String?
+  metaDescription String? @db.Text
+
+  images      ProjectImage[]
+  services    ProjectService[]
+  tags        ProjectTag[]
+  testimonial ProjectTestimonial?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([featured])
+  @@index([displayOrder])
+  @@map("projects")
+}
+
+// -------------------------
+// PROJECT IMAGES
+// -------------------------
+
+model ProjectImage {
+  id        String  @id @default(cuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  url      String
+  publicId String?
+  alt      String?
+  type     ProjectImageType
+  order    Int              @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+  @@index([type])
+  @@map("project_images")
+}
+
+// -------------------------
+// SERVICES
+// -------------------------
+
+model Service {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String? @db.Text
+
+  problemSolved  String? @db.Text
+  whatIncludes   String? @db.Text
+  recommendedFor String? @db.Text
+
+  icon         String?
+  active       Boolean @default(true)
+  displayOrder Int     @default(0)
+
+  projects              ProjectService[]
+  inquiries             Inquiry[]              @relation("InquiryService")
+  recommendedInquiries  Inquiry[]              @relation("RecommendedService")
+  diagnosticAnswers     DiagnosticAnswer[]     @relation("DiagnosticAnswerService")
+  diagnosticSubmissions DiagnosticSubmission[] @relation("DiagnosticSubmissionService")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active])
+  @@index([displayOrder])
+  @@map("services")
+}
+
+// -------------------------
+// DIAGNOSTIC
+// -------------------------
+
+model DiagnosticStep {
+  id           String  @id @default(cuid())
+  key          String  @unique
+  question     String
+  description  String? @db.Text
+  active       Boolean @default(true)
+  displayOrder Int     @default(0)
+
+  answers DiagnosticAnswer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active])
+  @@index([displayOrder])
+  @@map("diagnostic_steps")
+}
+
+model DiagnosticAnswer {
+  id           String         @id @default(cuid())
+  stepId       String
+  step         DiagnosticStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  label        String
+  value        String
+  active       Boolean        @default(true)
+  displayOrder Int            @default(0)
+
+  recommendationWeight Int      @default(1)
+  recommendedServiceId String?
+  recommendedService   Service? @relation("DiagnosticAnswerService", fields: [recommendedServiceId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([stepId, value])
+  @@index([stepId])
+  @@index([recommendedServiceId])
+  @@map("diagnostic_answers")
+}
+
+model DiagnosticSubmission {
+  id      String @id @default(cuid())
+  answers Json
+
+  recommendedServiceId String?
+  recommendedService   Service? @relation("DiagnosticSubmissionService", fields: [recommendedServiceId], references: [id], onDelete: SetNull)
+
+  inquiry Inquiry?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([recommendedServiceId])
+  @@index([createdAt])
+  @@map("diagnostic_submissions")
+}
+
+// -------------------------
+// PROJECT - SERVICE
+// Muchos a muchos
+// -------------------------
+
+model ProjectService {
+  projectId String
+  serviceId String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, serviceId])
+  @@index([serviceId])
+  @@map("project_services")
+}
+
+// -------------------------
+// TESTIMONIAL
+// -------------------------
+
+model ProjectTestimonial {
+  id        String @id @default(cuid())
+  projectId String @unique
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  quote         String  @db.Text
+  authorName    String
+  authorRole    String?
+  authorCompany String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("project_testimonials")
+}
+
+// -------------------------
+// TAGS
+// -------------------------
+
+model Tag {
+  id   String @id @default(cuid())
+  name String
+  slug String @unique
+
+  projects ProjectTag[]
+
+  createdAt DateTime @default(now())
+
+  @@map("tags")
+}
+
+model ProjectTag {
+  projectId String
+  tagId     String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, tagId])
+  @@index([tagId])
+  @@map("project_tags")
+}
+
+// -------------------------
+// CONSULTAS / LEADS
+// -------------------------
+
+model Inquiry {
+  id String @id @default(cuid())
+
+  name      String
+  email     String
+  whatsapp  String?
+  brandName String?
+
+  message String? @db.Text
+  budget  String?
+
+  status InquiryStatus @default(NEW)
+  source InquirySource @default(CONTACT_FORM)
+
+  // Respuestas del diagnóstico
+  diagnosticNeed      String?
+  diagnosticSituation String?
+  diagnosticBusiness  String?
+  diagnosticAnswers   Json?
+
+  // Servicio elegido por el usuario
+  serviceId String?
+  service   Service? @relation("InquiryService", fields: [serviceId], references: [id], onDelete: SetNull)
+
+  // Servicio recomendado por el diagnóstico
+  recommendedServiceId String?
+  recommendedService   Service? @relation("RecommendedService", fields: [recommendedServiceId], references: [id], onDelete: SetNull)
+
+  diagnosticSubmissionId String?               @unique
+  diagnosticSubmission   DiagnosticSubmission? @relation(fields: [diagnosticSubmissionId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([source])
+  @@index([serviceId])
+  @@index([recommendedServiceId])
+  @@index([createdAt])
+  @@map("inquiries")
+}

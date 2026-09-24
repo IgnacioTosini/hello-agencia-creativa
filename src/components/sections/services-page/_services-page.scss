@@ -1,0 +1,172 @@
+@use "@/styles/variables" as *;
+
+.servicesPage {
+  min-height: 100svh;
+  padding: 7rem max(2rem, calc((100% - 60.75rem) / 2)) 5rem;
+  background:
+    radial-gradient(
+      ellipse at 0% 10%,
+      rgba($color-text-tertiary, 0.15),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 100% 45%,
+      rgba($hero-accent-color, 0.2),
+      transparent 42%
+    ),
+    $hero-background-color;
+}
+.servicesPageHero {
+  padding-top: 1rem;
+}
+.servicesPageHero p,
+.serviceDetailInfo h3 {
+  color: $color-text-tertiary;
+  font-size: $font-size-small;
+  font-weight: $font-weight-semibold;
+  line-height: 1.5;
+}
+.servicesPageHero h1 {
+  margin-top: 1.75rem;
+  color: $color-text;
+  font-size: clamp(3.25rem, 5vw, 4.5rem);
+  font-weight: $font-weight-bold;
+  letter-spacing: -0.125rem;
+  line-height: 1.03;
+}
+.servicesPageHero span {
+  display: block;
+  max-width: 42rem;
+  margin-top: 2rem;
+  color: $color-text-secondary;
+  font-size: $font-size-medium-large;
+  line-height: 1.75;
+}
+.serviceDetails {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 3.25rem;
+}
+.serviceDetailCard {
+  display: grid;
+  grid-template-columns: minmax(18rem, 1fr) minmax(0, 1.6fr);
+  gap: 3rem;
+  padding: 2.5rem 2rem;
+  border: 0.0625rem solid rgba($hero-border-color, 0.85);
+  border-radius: 1.5rem;
+  background: rgba($hero-surface-color, 0.76);
+  box-shadow: 0 1.5rem 3rem -2.5rem rgba($color-text-tertiary, 0.5);
+}
+.serviceDetailMark {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: $color-text-tertiary;
+  font-size: $font-size-medium;
+  font-weight: $font-weight-medium;
+}
+.serviceDetailMark span {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border-radius: 1rem;
+  background: rgba($color-text-tertiary, 0.1);
+  font-size: 1.5rem;
+}
+.serviceDetailMark small {
+  font-size: $font-size-medium;
+}
+.serviceDetailIntro h2 {
+  margin-top: 1.5rem;
+  color: $color-text;
+  font-size: 1.75rem;
+  font-weight: $font-weight-semibold;
+  line-height: 1.2;
+}
+.serviceDetailDescription {
+  margin-top: 1.25rem;
+  color: $color-text-secondary;
+  font-size: $font-size-medium;
+  line-height: 1.7;
+}
+.serviceDetailButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 1.5rem;
+  padding: 0.625rem 1rem;
+  border-radius: 62.4375rem;
+  background: $color-primary-button;
+  color: $hero-surface-color;
+  font-size: $font-size-small;
+  font-weight: $font-weight-semibold;
+  text-decoration: none;
+}
+.serviceDetailButton span {
+  font-size: $font-size-medium;
+}
+.serviceDetailButton:focus-visible {
+  outline: 0.1875rem solid $border-color-secondary;
+  outline-offset: 0.25rem;
+}
+.serviceDetailInfo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem;
+  padding-top: 0.25rem;
+}
+.serviceDetailInfo h3 {
+  margin-bottom: 0.75rem;
+}
+.serviceDetailInfo p {
+  color: $color-text;
+  font-size: $font-size-medium;
+  line-height: 1.7;
+}
+.serviceIncludes {
+  grid-column: 1 / -1;
+}
+.serviceIncludes ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.625rem 2rem;
+  padding: 0;
+  list-style: none;
+}
+.serviceIncludes li {
+  color: $color-text;
+  font-size: $font-size-normal;
+}
+.serviceIncludes li::before {
+  content: "✓";
+  margin-right: 0.75rem;
+  color: $hero-accent-color;
+  font-weight: $font-weight-bold;
+}
+
+@media (max-width: 47.5rem) {
+  .servicesPage {
+    padding: 6.5rem 1.5rem 4rem;
+  }
+  .servicesPageHero h1 {
+    font-size: clamp(2.75rem, 10vw, 4rem);
+  }
+  .serviceDetailCard {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 1.75rem;
+  }
+}
+@media (max-width: 36rem) {
+  .serviceDetailInfo {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .serviceIncludes {
+    grid-column: auto;
+  }
+  .serviceIncludes ul {
+    grid-template-columns: 1fr;
+  }
+}

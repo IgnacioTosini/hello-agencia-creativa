@@ -1,0 +1,132 @@
+@use "@/styles/variables" as *;
+
+.cloudinaryImageUpload {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 0.0625rem solid $hero-border-color;
+  border-radius: 1rem;
+  background: rgba($hero-background-color, 0.32);
+
+  .cloudinaryImageUploadHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    > div {
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    strong {
+      font-size: $font-size-small;
+    }
+
+    small {
+      color: $color-text-secondary;
+      font-size: $font-size-xsmall;
+      font-weight: $font-weight-regular;
+    }
+
+    label {
+      display: inline-flex;
+      min-height: 2.75rem;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1rem;
+      border: 0.0625rem dashed $color-primary-button;
+      border-radius: 0.75rem;
+      background: rgba($color-primary-button, 0.07);
+      color: $color-primary-button;
+      cursor: pointer;
+      font-size: $font-size-small;
+      font-weight: $font-weight-semibold;
+
+      &:hover {
+        background: rgba($color-primary-button, 0.12);
+      }
+    }
+
+    input {
+      position: absolute;
+      width: 0.0625rem;
+      height: 0.0625rem;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  .cloudinaryImagePreview {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+
+    article {
+      display: grid;
+      grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.625rem;
+      border: 0.0625rem solid $hero-border-color;
+      border-radius: 0.75rem;
+      background: rgba($hero-surface-color, 0.86);
+
+      .cloudinaryImageThumbnail {
+        width: 4.5rem;
+        aspect-ratio: 1.25;
+        overflow: hidden;
+        border-radius: 0.5rem;
+        background-color: $hero-border-color;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
+      p {
+        display: grid;
+        min-width: 0;
+        gap: 0.25rem;
+        overflow: hidden;
+        color: $color-text-secondary;
+        font-size: $font-size-xsmall;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        span {
+          color: $color-primary-button;
+          font-weight: $font-weight-semibold;
+        }
+      }
+
+      button {
+        padding: 0.5rem 0.75rem;
+        border: 0.0625rem solid $hero-border-color;
+        border-radius: 62.4375rem;
+        background: transparent;
+        color: $color-text-secondary;
+        cursor: pointer;
+        font: inherit;
+        font-size: $font-size-xsmall;
+
+        &:hover {
+          border-color: #bd3b3b;
+          color: #bd3b3b;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 42rem) {
+    .cloudinaryImageUploadHeader {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .cloudinaryImagePreview {
+      grid-template-columns: 1fr;
+    }
+  }
+}

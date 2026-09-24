@@ -1,0 +1,203 @@
+@use "@/styles/variables" as *;
+
+.adminInquiryCard {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 1.5rem;
+  border: 0.0625rem solid $hero-border-color;
+  border-radius: 1.25rem;
+  background: rgba($hero-surface-color, 0.8);
+  box-shadow: 0 1.5rem 3rem -2.25rem rgba($color-text-tertiary, 0.42);
+
+  > header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.875rem;
+
+    h2 {
+      overflow: hidden;
+      font-size: $font-size-medium-large;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    p {
+      overflow: hidden;
+      margin-top: 0.25rem;
+      color: $color-text-secondary;
+      font-size: $font-size-small;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .adminInquiryAvatar {
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border-radius: 0.875rem;
+    background: rgba($color-primary-button, 0.1);
+    color: $color-text-tertiary;
+    font-size: $font-size-small;
+    font-weight: $font-weight-bold;
+  }
+
+  .adminInquiryStatus {
+    padding: 0.4375rem 0.6875rem;
+    border-radius: 62.4375rem;
+    background: rgba($color-text-secondary, 0.1);
+    color: $color-text-secondary;
+    font-size: $font-size-small;
+    font-weight: $font-weight-semibold;
+
+    &.isNEW {
+      background: rgba($color-primary-button, 0.1);
+      color: $color-text-tertiary;
+    }
+
+    &.isCONTACTED {
+      background: rgba($hero-accent-color, 0.12);
+      color: $secondary-color;
+    }
+  }
+
+  .adminInquiryMeta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    padding: 0.75rem 0;
+    border-top: 0.0625rem solid $hero-border-color;
+    border-bottom: 0.0625rem solid $hero-border-color;
+    color: $color-text-secondary;
+    font-size: $font-size-small;
+
+    span {
+      color: $color-text-tertiary;
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  .adminInquiryDetails {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.25rem;
+
+    dt {
+      color: $color-text-secondary;
+      font-size: $font-size-small;
+    }
+
+    dd {
+      margin-top: 0.375rem;
+      color: $color-text;
+      font-size: $font-size-normal;
+      font-weight: $font-weight-semibold;
+      line-height: 1.45;
+    }
+  }
+
+  blockquote {
+    margin-top: 1.25rem;
+    padding: 1rem;
+    border-radius: 0.875rem;
+    background: rgba($hero-background-color, 0.72);
+    color: $color-text;
+    font-size: $font-size-normal;
+    line-height: 1.6;
+  }
+
+  .adminInquiryDiagnostic {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 0.0625rem solid rgba($color-primary-button, 0.16);
+    border-radius: 0.875rem;
+    background: rgba($color-primary-button, 0.045);
+
+    p {
+      color: $color-text-tertiary;
+      font-size: $font-size-small;
+      font-weight: $font-weight-semibold;
+    }
+
+    ul {
+      display: grid;
+      gap: 0.375rem;
+      margin-top: 0.625rem;
+      padding-left: 1rem;
+      color: $color-text-secondary;
+      font-size: $font-size-small;
+      line-height: 1.45;
+    }
+  }
+
+  > footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 1.5rem;
+
+    button,
+    a {
+      min-height: 2.375rem;
+      flex: 0 0 auto;
+      padding: 0.625rem 0.875rem;
+      border: 0.0625rem solid $hero-border-color;
+      border-radius: 62.4375rem;
+      background: $hero-surface-color;
+      color: $color-text;
+      cursor: pointer;
+      font: inherit;
+      font-size: $font-size-small;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    button {
+      border-color: $color-primary-button;
+      background: $color-primary-button;
+      color: $hero-surface-color;
+      font-weight: $font-weight-semibold;
+
+      &:disabled {
+        cursor: default;
+        opacity: 0.65;
+      }
+    }
+  }
+
+  .adminInquiryContact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  @media (max-width: 42rem) {
+    padding: 1.125rem;
+
+    > header {
+      grid-template-columns: auto minmax(0, 1fr);
+
+      .adminInquiryStatus {
+        grid-column: 1 / -1;
+        width: fit-content;
+      }
+    }
+
+    > footer {
+      align-items: stretch;
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

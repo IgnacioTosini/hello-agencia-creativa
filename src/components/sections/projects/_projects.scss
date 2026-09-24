@@ -1,0 +1,135 @@
+@use "@/styles/variables" as *;
+
+.projects {
+  padding: 5.5rem max(2rem, calc((100% - 60.75rem) / 2));
+  background:
+    radial-gradient(
+      ellipse at 0% 30%,
+      rgba($color-text-tertiary, 0.13),
+      transparent 42%
+    ),
+    radial-gradient(
+      ellipse at 100% 76%,
+      rgba($hero-accent-color, 0.18),
+      transparent 43%
+    ),
+    $hero-background-color;
+
+  .projectsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: 2.25rem;
+  }
+
+  .projectCard {
+    overflow: hidden;
+    border: 0.0625rem solid rgba($hero-border-color, 0.82);
+    border-radius: 1rem;
+    background: rgba($hero-surface-color, 0.76);
+    box-shadow: 0 1.5rem 3rem -2.5rem rgba($color-text-tertiary, 0.4);
+  }
+
+  .projectCardImage {
+    position: relative;
+    display: block;
+    aspect-ratio: 1.6;
+    overflow: hidden;
+    background: $hero-border-color;
+  }
+
+  .projectCardImage img {
+    object-fit: cover;
+    transition: transform 320ms ease;
+  }
+
+  .projectCard:hover .projectCardImage img {
+    transform: scale(1.04);
+  }
+
+  .projectCardBody {
+    display: flex;
+    min-height: 15.75rem;
+    flex-direction: column;
+    padding: 1.25rem;
+  }
+
+  .projectCardMeta {
+    display: flex;
+    justify-content: space-between;
+    color: $color-text-tertiary;
+    font-size: $font-size-small;
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .projectCardBody h3 {
+    margin-top: 1.125rem;
+    color: $color-text;
+    font-size: 1.5rem;
+    font-weight: $font-weight-semibold;
+    line-height: 1.2;
+  }
+
+  .projectCardClient {
+    margin-top: 0.375rem;
+    color: $color-text-secondary;
+    font-size: $font-size-medium;
+  }
+
+  .projectCardDescription {
+    margin-top: 1.25rem;
+    color: rgba($color-text, 0.66);
+    font-size: $font-size-medium;
+    line-height: 1.65;
+  }
+
+  .projectCardLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: fit-content;
+    margin-top: auto;
+    padding-top: 1.25rem;
+    color: $color-text-tertiary;
+    font-size: $font-size-normal;
+    font-weight: $font-weight-medium;
+    text-decoration: none;
+  }
+
+  .projectCardLink span {
+    font-size: $font-size-medium;
+    transition: transform 180ms ease;
+  }
+
+  .projectCardLink:hover span {
+    transform: translateX(0.1875rem);
+  }
+
+  .projectCardLink:focus-visible,
+  .projectCardImage:focus-visible {
+    outline: 0.1875rem solid $border-color-secondary;
+    outline-offset: 0.25rem;
+  }
+
+  @media (max-width: 47.5rem) {
+    padding: 4rem 1.5rem;
+
+    .projectsGrid {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+  }
+
+  @media (min-width: 47.5625rem) and (max-width: 68.75rem) {
+    .projectsGrid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .projectCard:last-child {
+      grid-column: 1 / -1;
+      max-width: calc(50% - 0.5rem);
+    }
+  }
+}

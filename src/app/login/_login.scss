@@ -1,0 +1,150 @@
+@use "@/styles/variables" as *;
+
+.adminLogin {
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  padding: 2rem;
+  background:
+    radial-gradient(
+      ellipse at 0% 0%,
+      rgba($color-primary-button, 0.14),
+      transparent 42%
+    ),
+    radial-gradient(
+      ellipse at 100% 100%,
+      rgba($hero-accent-color, 0.14),
+      transparent 42%
+    ),
+    $hero-background-color;
+
+  > section {
+    width: min(100%, 30rem);
+    padding: 2.5rem;
+    border: 0.0625rem solid $hero-border-color;
+    border-radius: 1.5rem;
+    background: rgba($hero-surface-color, 0.86);
+    box-shadow: 0 2rem 4rem -2rem rgba($color-primary-button, 0.32);
+  }
+
+  .adminLoginBrand {
+    color: $color-text;
+    font-size: 1.375rem;
+    font-weight: $font-weight-bold;
+    letter-spacing: -0.0625rem;
+    text-decoration: none;
+
+    span {
+      color: $color-primary-button;
+    }
+  }
+
+  .adminLoginHeading {
+    margin-top: 3rem;
+
+    p {
+      color: $color-primary-button;
+      font-size: $font-size-small;
+      font-weight: $font-weight-semibold;
+    }
+
+    h1 {
+      margin-top: 0.5rem;
+      font-size: clamp(2rem, 6vw, 3rem);
+      letter-spacing: -0.09375rem;
+      line-height: 1.05;
+    }
+
+    span {
+      display: block;
+      margin-top: 1rem;
+      color: $color-text-secondary;
+      line-height: 1.55;
+    }
+  }
+
+  form {
+    display: grid;
+    margin-top: 2rem;
+
+    label {
+      color: $color-text;
+      font-size: $font-size-small;
+      font-weight: $font-weight-semibold;
+    }
+
+    input {
+      width: 100%;
+      min-height: 3rem;
+      margin-top: 0.5rem;
+      padding: 0.75rem 0.875rem;
+      border: 0.0625rem solid $hero-border-color;
+      border-radius: 0.75rem;
+      outline: none;
+      background: $hero-background-color;
+      color: $color-text;
+      font: inherit;
+
+      &:focus {
+        border-color: $color-primary-button;
+        box-shadow: 0 0 0 0.1875rem rgba($color-primary-button, 0.12);
+      }
+    }
+
+    button {
+      display: flex;
+      min-height: 3rem;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 0.25rem;
+      padding: 0.75rem 1rem;
+      border: 0;
+      border-radius: 62.4375rem;
+      background: $color-primary-button;
+      color: $hero-surface-color;
+      cursor: pointer;
+      font: inherit;
+      font-weight: $font-weight-semibold;
+
+      &:disabled {
+        cursor: wait;
+        opacity: 0.62;
+      }
+    }
+  }
+
+  .adminLoginError {
+    min-height: 2.5rem;
+    padding: 0.5rem 0;
+    color: $color-error;
+    font-size: $font-size-small;
+    line-height: 1.4;
+  }
+
+  .adminLoginBack {
+    display: block;
+    width: fit-content;
+    margin-top: 1.5rem;
+    color: $color-text-secondary;
+    font-size: $font-size-small;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-primary-button;
+    }
+  }
+
+  @media (max-width: 32rem) {
+    padding: 1rem;
+
+    > section {
+      padding: 1.5rem;
+      border-radius: 1.25rem;
+    }
+
+    .adminLoginHeading {
+      margin-top: 2.25rem;
+    }
+  }
+}

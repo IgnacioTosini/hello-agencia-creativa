@@ -1,0 +1,53 @@
+@use "@/styles/variables" as *;
+
+.introduction {
+  padding: 0 max(2rem, calc((100% - 60.75rem) / 2));
+  background:
+    radial-gradient(
+      ellipse at 0% 0%,
+      rgba($color-text-tertiary, 0.13),
+      transparent 48%
+    ),
+    radial-gradient(
+      ellipse at 100% 78%,
+      rgba($hero-accent-color, 0.15),
+      transparent 42%
+    ),
+    $hero-background-color;
+
+  .introductionInner {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 4rem;
+    min-height: 14.75rem;
+    padding: 2.75rem 0;
+    border-top: 0.0625rem solid $hero-border-color;
+    border-bottom: 0.0625rem solid $hero-border-color;
+  }
+
+  .introductionEyebrow {
+    color: $color-text-tertiary;
+    font-size: $font-size-medium;
+    font-weight: $font-weight-medium;
+    line-height: 1.5;
+  }
+
+  h2 {
+    color: $color-text;
+    font-size: clamp(2rem, 3vw, 2.75rem);
+    font-weight: $font-weight-semibold;
+    letter-spacing: -0.09375rem;
+    line-height: 1.1;
+  }
+
+  @media (max-width: 47.5rem) {
+    padding-inline: 1.5rem;
+
+    .introductionInner {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      min-height: auto;
+      padding: 2.5rem 0;
+    }
+  }
+}

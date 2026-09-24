@@ -1,0 +1,112 @@
+@use "@/styles/variables" as *;
+
+.projectsPage {
+  min-height: 100svh;
+  padding: 7rem max(2rem, calc((100% - 70.75rem) / 2)) 5rem;
+  background:
+    radial-gradient(
+      ellipse at 0% 10%,
+      rgba($color-text-tertiary, 0.15),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 100% 45%,
+      rgba($hero-accent-color, 0.2),
+      transparent 42%
+    ),
+    $hero-background-color;
+
+  .projectsPageHero {
+    max-width: 54rem;
+
+    p {
+      color: $color-text-tertiary;
+      font-size: $font-size-small;
+      font-weight: $font-weight-semibold;
+    }
+
+    h1 {
+      margin-top: 1.75rem;
+      color: $color-text;
+      font-size: clamp(3.25rem, 5vw, 4.5rem);
+      font-weight: $font-weight-bold;
+      letter-spacing: -0.125rem;
+      line-height: 1.03;
+    }
+
+    span {
+      display: block;
+      max-width: 44rem;
+      margin-top: 2rem;
+      color: $color-text-secondary;
+      font-size: $font-size-medium-large;
+      line-height: 1.75;
+    }
+  }
+
+  .projectFilters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 3rem;
+  }
+
+  .projectFilters button {
+    padding: 0.5625rem 1rem;
+    border: 0.0625rem solid $hero-border-color;
+    border-radius: 62.4375rem;
+    background: rgba($hero-surface-color, 0.72);
+    color: $color-text;
+    cursor: pointer;
+    font: inherit;
+    font-size: $font-size-normal;
+    white-space: nowrap;
+  }
+
+  .projectFilters button:hover,
+  .projectFilters button.isActive {
+    border-color: $color-primary-button;
+    background: $color-primary-button;
+    color: $hero-surface-color;
+  }
+
+  .projectFilters button:focus-visible {
+    outline: 0.1875rem solid $border-color-secondary;
+    outline-offset: 0.1875rem;
+  }
+
+  .projectsCatalogGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: 2.25rem;
+  }
+
+  .projectsEmpty {
+    grid-column: 1 / -1;
+    color: $color-text-secondary;
+    font-size: $font-size-medium;
+  }
+
+  @media (max-width: 47.5rem) {
+    padding: 6.5rem 1.5rem 4rem;
+
+    .projectsPageHero h1 {
+      font-size: clamp(2.75rem, 10vw, 4rem);
+    }
+
+    .projectFilters {
+      margin-top: 2.25rem;
+    }
+
+    .projectsCatalogGrid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (min-width: 47.5625rem) and (max-width: 68.75rem) {
+    .projectsCatalogGrid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}

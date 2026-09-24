@@ -1,0 +1,86 @@
+@use "@/styles/variables" as *;
+
+.diagnostic {
+  padding: 4rem max(2rem, calc((100% - 60.75rem) / 2)) 5rem;
+  background:
+    radial-gradient(
+      ellipse at 0% 35%,
+      rgba($color-text-tertiary, 0.12),
+      transparent 42%
+    ),
+    radial-gradient(
+      ellipse at 100% 70%,
+      rgba($hero-accent-color, 0.16),
+      transparent 43%
+    ),
+    $hero-background-color;
+
+  .diagnosticCard {
+    display: flex;
+    min-height: 19rem;
+    align-items: center;
+    padding: 3.75rem 3.5rem;
+    border: 0.0625rem solid rgba($hero-surface-color, 0.9);
+    border-radius: 1.5rem;
+    background: rgba($hero-surface-color, 0.72);
+    box-shadow: 0 1.75rem 3.5rem -2.5rem rgba($color-text-tertiary, 0.48);
+  }
+
+  .diagnosticEyebrow {
+    color: $color-text-tertiary;
+    font-size: $font-size-small;
+    font-weight: $font-weight-medium;
+    line-height: 1.5;
+  }
+  h2 {
+    margin-top: 0.75rem;
+    color: $color-text;
+    font-size: clamp(2rem, 3vw, 2.75rem);
+    font-weight: $font-weight-semibold;
+    letter-spacing: -0.09375rem;
+    line-height: 1.1;
+  }
+  .diagnosticDescription {
+    margin-top: 1rem;
+    color: $color-text-secondary;
+    font-size: $font-size-medium-large;
+    line-height: 1.5;
+  }
+
+  .diagnosticButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+    padding: 0.875rem 1.75rem;
+    border-radius: 62.4375rem;
+    background: $color-text;
+    color: $hero-surface-color;
+    font-size: $font-size-normal;
+    font-weight: $font-weight-semibold;
+    line-height: 1.25rem;
+    text-decoration: none;
+    transition:
+      background-color 180ms ease,
+      transform 180ms ease;
+    span {
+      font-size: $font-size-medium;
+    }
+    &:hover {
+      background: $color-text-tertiary;
+      transform: translateY(-0.125rem);
+    }
+    &:focus-visible {
+      outline: 0.1875rem solid $border-color-secondary;
+      outline-offset: 0.25rem;
+    }
+  }
+
+  @media (max-width: 47.5rem) {
+    padding: 2.5rem 1.5rem 4rem;
+    .diagnosticCard {
+      min-height: auto;
+      padding: 2.5rem 1.75rem;
+    }
+  }
+}

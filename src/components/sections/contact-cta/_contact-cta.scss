@@ -1,0 +1,93 @@
+@use "@/styles/variables" as *;
+
+.contactCta {
+  padding: 5rem max(2rem, calc((100% - 60.75rem) / 2));
+  background:
+    radial-gradient(
+      ellipse at 0% 35%,
+      rgba($color-text-tertiary, 0.12),
+      transparent 42%
+    ),
+    radial-gradient(
+      ellipse at 100% 70%,
+      rgba($hero-accent-color, 0.16),
+      transparent 43%
+    ),
+    $hero-background-color;
+
+  .contactCtaCard {
+    display: flex;
+    min-height: 25.25rem;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 2rem;
+    border-radius: 1.5rem;
+    background: $color-text;
+    color: $hero-surface-color;
+  }
+
+  .contactCtaIcon {
+    display: grid;
+    width: 1.75rem;
+    height: 1.75rem;
+    place-items: center;
+    border: 0.125rem solid $hero-accent-color;
+    border-radius: 50%;
+    color: $hero-accent-color;
+    font-size: $font-size-small;
+    font-weight: $font-weight-bold;
+    line-height: 1;
+  }
+
+  h2 {
+    max-width: 40rem;
+    margin-top: 1.75rem;
+    text-align: center;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: $font-weight-semibold;
+    letter-spacing: -0.09375rem;
+    line-height: 1.08;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding: 0.875rem 1.75rem;
+    border: 0.0625rem solid rgba($hero-surface-color, 0.8);
+    border-radius: 62.4375rem;
+    background: rgba($hero-surface-color, 0.75);
+    color: $color-text;
+    font-size: $font-size-normal;
+    font-weight: $font-weight-medium;
+    line-height: 1.25rem;
+    text-decoration: none;
+    transition:
+      background-color 180ms ease,
+      transform 180ms ease;
+    span {
+      font-size: $font-size-medium;
+    }
+    &:hover {
+      background: $hero-surface-color;
+      transform: translateY(-0.125rem);
+    }
+    &:focus-visible {
+      outline: 0.1875rem solid $hero-accent-color;
+      outline-offset: 0.25rem;
+    }
+  }
+
+  @media (max-width: 47.5rem) {
+    padding: 3.5rem 1.5rem;
+    .contactCtaCard {
+      min-height: 22rem;
+      padding-inline: 1.25rem;
+    }
+    .contactCtaBreak {
+      display: none;
+    }
+  }
+}

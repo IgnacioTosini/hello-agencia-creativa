@@ -1,0 +1,60 @@
+@use "@/styles/variables" as *;
+
+.Toastify {
+  .Toastify__toast-container {
+    width: min(24rem, calc(100vw - 2rem));
+  }
+
+  .helloToast {
+    min-height: 4rem;
+    padding: 0.875rem 1rem;
+    border: 0.0625rem solid $hero-border-color;
+    border-radius: 1rem;
+    background: rgba($hero-surface-color, 0.96);
+    box-shadow: 0 1.25rem 2.75rem -1.5rem rgba($color-text, 0.35);
+    color: $color-text;
+    font-family: $font-family;
+    font-size: $font-size-normal;
+    backdrop-filter: blur(0.75rem);
+
+    .Toastify__toast-icon {
+      width: 1.25rem;
+    }
+
+    .Toastify__close-button {
+      color: $color-text-secondary;
+    }
+
+    &.Toastify__toast--success {
+      border-color: rgba($hero-accent-color, 0.35);
+
+      .Toastify__toast-icon {
+        color: $hero-accent-color;
+      }
+    }
+
+    &.Toastify__toast--error {
+      border-color: rgba($color-error, 0.35);
+
+      .Toastify__toast-icon {
+        color: $color-error;
+      }
+    }
+
+    &.Toastify__toast--info {
+      border-color: rgba($color-primary-button, 0.3);
+
+      .Toastify__toast-icon {
+        color: $color-primary-button;
+      }
+    }
+  }
+
+  .helloToastProgress {
+    background: linear-gradient(
+      90deg,
+      $color-primary-button,
+      $hero-accent-color
+    );
+  }
+}

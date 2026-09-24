@@ -1,0 +1,57 @@
+@use "@/styles/variables" as *;
+
+.footer {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 2rem;
+  min-height: 6.25rem;
+  padding: 1.5rem max(2rem, calc((100% - 60.75rem) / 2));
+  border-top: 0.0625rem solid $hero-border-color;
+  background: $hero-surface-color;
+  color: $color-text-secondary;
+
+  a {
+    text-decoration: none;
+  }
+  .footerLogo {
+    color: $color-text;
+    font-size: 1.25rem;
+    font-weight: $font-weight-bold;
+    letter-spacing: -0.0625rem;
+    span {
+      color: $color-text-tertiary;
+    }
+  }
+  p,
+  .footerContact {
+    font-size: $font-size-normal;
+    line-height: 1.5;
+  }
+  p {
+    text-align: center;
+  }
+  .footerContact {
+    justify-self: end;
+    color: $color-text-secondary;
+    &:hover {
+      color: $color-text-tertiary;
+    }
+  }
+  a:focus-visible {
+    outline: 0.1875rem solid $border-color-secondary;
+    outline-offset: 0.25rem;
+  }
+
+  @media (max-width: 47.5rem) {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    min-height: 5rem;
+    padding: 1.25rem 1.5rem;
+    p {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      text-align: left;
+    }
+  }
+}

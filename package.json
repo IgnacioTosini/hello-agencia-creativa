@@ -5,13 +5,29 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "backup:cloudinary": "node -r dotenv/config scripts/backup-cloudinary.mjs",
+    "backup:postgres": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/backup-postgres.ps1",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run db:validate && npm run build",
+    "db:seed": "node -r dotenv/config prisma/seed.mjs",
+    "db:seed:diagnostic": "node -r dotenv/config prisma/seed-diagnostic.mjs",
+    "db:seed:inquiries": "node -r dotenv/config prisma/seed-inquiries.mjs",
+    "db:validate": "prisma validate",
+    "format": "prettier --write \"src/**/*.{ts,tsx,scss}\" \"prisma/**/*.mjs\" \"*.{ts,mjs,json,yml,yaml}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,scss}\" \"prisma/**/*.mjs\" \"*.{ts,mjs,json,yml,yaml}\"",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "gsap": "^3.15.0",
     "next": "16.3.6",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "react-toastify": "^11.1.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -19,6 +35,13 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
-    "typescript": "^5"
+    "prettier": "^3.9.9",
+    "prisma": "^6.19.3",
+    "sass": "^1.105.0",
+    "typescript": "^5",
+    "vitest": "^4.1.11"
+  },
+  "overrides": {
+    "deepmerge-ts": "^8.0.0"
   }
 }

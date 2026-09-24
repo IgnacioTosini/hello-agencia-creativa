@@ -1,0 +1,6 @@
+@use "@/styles/variables" as *;
+
+.adminSiteContent {
+  min-height: 100svh;
+  border-left: 0.0625rem solid rgba($hero-border-color, 0.35);
+}

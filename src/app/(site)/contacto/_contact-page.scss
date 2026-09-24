@@ -1,0 +1,54 @@
+@use "@/styles/variables" as *;
+
+.contactPage {
+  min-height: 100svh;
+  padding: 7rem max(2rem, calc((100% - 60.75rem) / 2)) 5rem;
+  background:
+    radial-gradient(
+      ellipse at 0% 10%,
+      rgba($color-text-tertiary, 0.15),
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 100% 45%,
+      rgba($hero-accent-color, 0.2),
+      transparent 42%
+    ),
+    $hero-background-color;
+}
+
+.contactPage {
+  .contactPageHero {
+    max-width: 43rem;
+
+    h1 {
+      color: $color-text;
+      font-size: clamp(3.25rem, 5vw, 4.5rem);
+      font-weight: $font-weight-bold;
+      letter-spacing: -0.125rem;
+      line-height: 1.03;
+    }
+
+    p {
+      margin-top: 2rem;
+      color: $color-text-secondary;
+      font-size: $font-size-medium-large;
+      line-height: 1.75;
+    }
+  }
+
+  .contactForm {
+    max-width: 60rem;
+    margin: 3.25rem auto 0;
+  }
+}
+
+@media (max-width: 47.5rem) {
+  .contactPage {
+    padding: 6.5rem 1.5rem 4rem;
+  }
+
+  .contactPageHero h1 {
+    font-size: clamp(2.75rem, 10vw, 4rem);
+  }
+}
