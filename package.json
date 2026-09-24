@@ -15,6 +15,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,scss}\" \"prisma/**/*.mjs\" \"*.{ts,mjs,json,yml,yaml}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,scss}\" \"prisma/**/*.mjs\" \"*.{ts,mjs,json,yml,yaml}\"",
     "start": "next start",
+    "vercel-build": "prisma migrate deploy && next build",
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
