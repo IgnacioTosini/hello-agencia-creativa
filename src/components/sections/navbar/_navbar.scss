@@ -65,7 +65,11 @@
   }
 
   .navbarContactButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     justify-self: end;
+    min-height: 2.25rem;
     padding: 0.625rem 1.25rem;
     border-radius: 62.4375rem;
     background: $color-text;

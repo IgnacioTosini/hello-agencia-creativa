@@ -3,6 +3,7 @@ import type { RefObject } from "react";
 
 export function useFooterGsap(scope: RefObject<HTMLElement | null>) {
   useGsapReveal(scope, {
+    start: "top bottom",
     groups: [
       {
         selector: ".footerLogo, .footer p, .footerContact",
