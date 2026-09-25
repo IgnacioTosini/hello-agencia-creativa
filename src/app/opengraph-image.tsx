@@ -1,8 +1,16 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
 export const alt = "Hello Agencia Creativa — estrategia, diseño y creatividad";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+const logoData = await readFile(
+  join(process.cwd(), "public/logo.jpg"),
+  "base64",
+);
+const logoSrc = `data:image/jpeg;base64,${logoData}`;
 
 export default function OpenGraphImage() {
   return new ImageResponse(
@@ -15,8 +23,8 @@ export default function OpenGraphImage() {
         alignItems: "center",
         justifyContent: "center",
         overflow: "hidden",
-        background: "#16171d",
-        color: "#ffffff",
+        background: "#baff1f",
+        color: "#16171d",
       }}
     >
       <div
@@ -28,8 +36,8 @@ export default function OpenGraphImage() {
           height: 500,
           display: "flex",
           borderRadius: 999,
-          background: "#6845ef",
-          opacity: 0.75,
+          background: "#ed54ef",
+          opacity: 0.22,
         }}
       />
       <div
@@ -41,8 +49,8 @@ export default function OpenGraphImage() {
           height: 580,
           display: "flex",
           borderRadius: 999,
-          background: "#00bfae",
-          opacity: 0.72,
+          background: "#ed54ef",
+          opacity: 0.18,
         }}
       />
       <div
@@ -50,7 +58,7 @@ export default function OpenGraphImage() {
           position: "absolute",
           inset: 36,
           display: "flex",
-          border: "2px solid rgba(255,255,255,0.16)",
+          border: "2px solid rgba(22,23,29,0.14)",
           borderRadius: 34,
         }}
       />
@@ -66,38 +74,34 @@ export default function OpenGraphImage() {
           padding: "70px 100px",
         }}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={logoSrc}
+          alt=""
+          width="250"
+          height="250"
+          style={{ width: 250, height: 250, objectFit: "cover" }}
+        />
         <div
           style={{
             display: "flex",
-            alignItems: "baseline",
-            fontSize: 168,
-            fontWeight: 800,
-            lineHeight: 0.9,
-            letterSpacing: "-0.08em",
-          }}
-        >
-          hello<span style={{ color: "#c3b6ff" }}>.</span>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            marginTop: 58,
-            fontSize: 34,
-            fontWeight: 500,
+            marginTop: 32,
+            fontSize: 42,
+            fontWeight: 700,
             letterSpacing: "-0.02em",
           }}
         >
-          Estrategia · Diseño · Creatividad
+          Hello Agencia Creativa
         </div>
         <div
           style={{
             display: "flex",
             marginTop: 18,
-            color: "#d4d8e3",
-            fontSize: 24,
+            color: "#34363f",
+            fontSize: 26,
           }}
         >
-          Ideas con intención para marcas que quieren comunicar mejor.
+          Estrategia · Diseño · Creatividad
         </div>
       </div>
     </div>,

@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
-export const size = { width: 64, height: 64 };
+export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
 const logoData = await readFile(
@@ -11,14 +11,14 @@ const logoData = await readFile(
 );
 const logoSrc = `data:image/jpeg;base64,${logoData}`;
 
-export default function Icon() {
+export default function AppleIcon() {
   return new ImageResponse(
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={logoSrc}
       alt=""
-      width="64"
-      height="64"
+      width="180"
+      height="180"
       style={{ width: "100%", height: "100%", objectFit: "cover" }}
     />,
     size,
