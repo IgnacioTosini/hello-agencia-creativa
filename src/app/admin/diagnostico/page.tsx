@@ -2,25 +2,30 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import { AdminDeleteDialog } from "@/components/admin/admin-delete-dialog/AdminDeleteDialog";
 import { AdminListFilters } from "@/components/admin/admin-list-filters/AdminListFilters";
 import { DiagnosticDecisionCharts } from "@/components/admin/diagnostic-decision-charts/DiagnosticDecisionCharts";
 import { DiagnosticWeightGuide } from "@/components/admin/diagnostic-weight-guide/DiagnosticWeightGuide";
+import { RequiredMark } from "@/components/ui/RequiredMark";
 import { useAdminActivityStore } from "@/hooks/useAdminActivityStore";
 import { useDiagnosticAnalytics } from "@/hooks/useDiagnosticAnalytics";
 import { useDiagnosticStore } from "@/hooks/useDiagnosticStore";
 import { useServicesStore } from "@/hooks/useServicesStore";
+import { diagnosticBodySchema } from "@/lib/api-schemas";
 import {
   cloneDiagnosticStep,
   createEmptyAnswer,
   createEmptyStep,
 } from "@/lib/admin-diagnostic";
+import { describeInvalidForm, describeZodIssues } from "@/lib/form-validation";
 import type { DiagnosticAnswer, DiagnosticStep } from "@/types/diagnostic";
 import "./_diagnostico.scss";
 
 type StatusFilter = "all" | "active" | "hidden";
 
 export default function AdminDiagnosticPage() {
-  const { steps, isLoading, error, saveDiagnostic } = useDiagnosticStore();
+  const { steps, isLoading, error, deleteDiagnosticStep, saveDiagnostic } =
+    useDiagnosticStore();
   const {
     analytics,
     isLoading: isAnalyticsLoading,
@@ -32,6 +37,8 @@ export default function AdminDiagnosticPage() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [isSaving, setIsSaving] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [stepToDelete, setStepToDelete] = useState<DiagnosticStep | null>(null);
 
   useEffect(() => {
     if (!editing) {
@@ -118,14 +125,18 @@ export default function AdminDiagnosticPage() {
     );
 
     if (step.active && !step.answers.some((answer) => answer.active)) {
-      toast.error("Un paso activo necesita al menos una respuesta visible.");
+      const message =
+        "Marcá al menos una respuesta como visible para este paso.";
+      setFormError(message);
+      toast.error(message);
       return;
     }
 
     if (new Set(normalizedValues).size !== normalizedValues.length) {
-      toast.error(
-        "Los valores internos de las respuestas no pueden repetirse.",
-      );
+      const message =
+        "Revisá Valor interno: no puede repetirse entre respuestas.";
+      setFormError(message);
+      toast.error(message);
       return;
     }
 
@@ -141,6 +152,27 @@ export default function AdminDiagnosticPage() {
         displayOrder: index + 1,
       })),
     };
+    const validation = diagnosticBodySchema.safeParse({
+      steps: [normalizedStep],
+    });
+
+    if (!validation.success) {
+      setFormError(
+        describeZodIssues(validation.error.issues, {
+          question: "Pregunta",
+          key: "Clave interna",
+          displayOrder: "Orden",
+          answers: "Opciones de respuesta",
+          label: "Respuesta",
+          value: "Valor interno",
+          recommendedServiceSlug: "Servicio recomendado",
+          recommendationWeight: "Peso",
+        }),
+      );
+      return;
+    }
+
+    setFormError("");
     const nextSteps = exists
       ? steps.map((item) =>
           item.id === normalizedStep.id ? normalizedStep : item,
@@ -205,7 +237,10 @@ export default function AdminDiagnosticPage() {
         </div>
         <button
           type="button"
-          onClick={() => setEditing(createEmptyStep(steps.length + 1))}
+          onClick={() => {
+            setFormError("");
+            setEditing(createEmptyStep(steps.length + 1));
+          }}
         >
           + Nuevo paso
         </button>
@@ -264,19 +299,32 @@ export default function AdminDiagnosticPage() {
             >
               {step.active ? "Activo" : "Oculto"}
             </span>
-            <button
-              type="button"
-              disabled={isSaving}
-              onClick={() => void toggleStep(step)}
-            >
-              {step.active ? "Ocultar" : "Activar"}
-            </button>
-            <button
-              type="button"
-              onClick={() => setEditing(cloneDiagnosticStep(step))}
-            >
-              Editar
-            </button>
+            <div className="adminDiagnosticActions">
+              <button
+                type="button"
+                disabled={isSaving}
+                onClick={() => void toggleStep(step)}
+              >
+                {step.active ? "Ocultar" : "Activar"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setFormError("");
+                  setEditing(cloneDiagnosticStep(step));
+                }}
+              >
+                Editar
+              </button>
+              <button
+                className="adminDiagnosticDelete"
+                type="button"
+                disabled={isSaving}
+                onClick={() => setStepToDelete(step)}
+              >
+                Eliminar
+              </button>
+            </div>
           </article>
         ))}
 
@@ -294,6 +342,10 @@ export default function AdminDiagnosticPage() {
       {editing && (
         <div className="adminDiagnosticModal" role="dialog" aria-modal="true">
           <form
+            onInput={() => setFormError("")}
+            onInvalid={(event) =>
+              setFormError(describeInvalidForm(event.currentTarget))
+            }
             onSubmit={(event) => {
               event.preventDefault();
               void saveStep(editing);
@@ -308,7 +360,10 @@ export default function AdminDiagnosticPage() {
                 type="button"
                 aria-label="Cerrar"
                 disabled={isSaving}
-                onClick={() => setEditing(null)}
+                onClick={() => {
+                  setFormError("");
+                  setEditing(null);
+                }}
               >
                 ×
               </button>
@@ -316,8 +371,12 @@ export default function AdminDiagnosticPage() {
 
             <div className="adminDiagnosticStepFields">
               <label>
-                Pregunta
+                <span>
+                  Pregunta <RequiredMark />
+                </span>
                 <input
+                  name="question"
+                  data-field-label="Pregunta"
                   required
                   value={editing.question}
                   onChange={(event) =>
@@ -326,8 +385,13 @@ export default function AdminDiagnosticPage() {
                 />
               </label>
               <label>
-                Clave interna
+                <span>
+                  Clave interna <RequiredMark />
+                </span>
                 <input
+                  name="key"
+                  data-field-label="Clave interna"
+                  pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
                   required
                   value={editing.key}
                   onChange={(event) =>
@@ -336,8 +400,13 @@ export default function AdminDiagnosticPage() {
                 />
               </label>
               <label>
-                Orden
+                <span>
+                  Orden <RequiredMark />
+                </span>
                 <input
+                  name="displayOrder"
+                  data-field-label="Orden"
+                  required
                   type="number"
                   min="1"
                   value={editing.displayOrder}
@@ -362,6 +431,8 @@ export default function AdminDiagnosticPage() {
               <label className="fullWidth">
                 Descripción interna
                 <textarea
+                  name="description"
+                  data-field-label="Descripción interna"
                   value={editing.description ?? ""}
                   onChange={(event) =>
                     setEditing({ ...editing, description: event.target.value })
@@ -399,8 +470,12 @@ export default function AdminDiagnosticPage() {
                   <article key={answer.id}>
                     <span>{String(index + 1).padStart(2, "0")}</span>
                     <label className="answerLabel">
-                      Respuesta
+                      <span>
+                        Respuesta <RequiredMark />
+                      </span>
                       <input
+                        name={`answer-${index}-label`}
+                        data-field-label={`Respuesta ${index + 1}`}
                         required
                         value={answer.label}
                         onChange={(event) =>
@@ -409,8 +484,12 @@ export default function AdminDiagnosticPage() {
                       />
                     </label>
                     <label>
-                      Valor interno
+                      <span>
+                        Valor interno <RequiredMark />
+                      </span>
                       <input
+                        name={`answer-${index}-value`}
+                        data-field-label={`Valor interno ${index + 1}`}
                         required
                         value={answer.value}
                         onChange={(event) =>
@@ -421,6 +500,8 @@ export default function AdminDiagnosticPage() {
                     <label>
                       Servicio recomendado
                       <select
+                        name={`answer-${index}-service`}
+                        data-field-label={`Servicio recomendado ${index + 1}`}
                         value={answer.recommendedServiceSlug ?? ""}
                         onChange={(event) =>
                           updateAnswer(answer.id, {
@@ -438,8 +519,13 @@ export default function AdminDiagnosticPage() {
                       </select>
                     </label>
                     <label>
-                      Peso
+                      <span>
+                        Peso <RequiredMark />
+                      </span>
                       <input
+                        name={`answer-${index}-weight`}
+                        data-field-label={`Peso ${index + 1}`}
+                        required
                         type="number"
                         min="1"
                         max="5"
@@ -479,11 +565,20 @@ export default function AdminDiagnosticPage() {
               </div>
             </section>
 
+            {formError && (
+              <p className="formValidationSummary" aria-live="polite">
+                {formError}
+              </p>
+            )}
+
             <footer>
               <button
                 type="button"
                 disabled={isSaving}
-                onClick={() => setEditing(null)}
+                onClick={() => {
+                  setFormError("");
+                  setEditing(null);
+                }}
               >
                 Cancelar
               </button>
@@ -493,6 +588,26 @@ export default function AdminDiagnosticPage() {
             </footer>
           </form>
         </div>
+      )}
+
+      {stepToDelete && (
+        <AdminDeleteDialog
+          resourceType="paso del diagnóstico"
+          resourceName={stepToDelete.question}
+          consequence="También se eliminarán todas sus opciones de respuesta. Los diagnósticos históricos conservarán sus respuestas guardadas."
+          onClose={() => setStepToDelete(null)}
+          onConfirm={async (password) => {
+            const stepName = stepToDelete.question;
+
+            await deleteDiagnosticStep(stepToDelete.id, password);
+            addActivity(
+              `Se eliminó el paso ${stepName} del diagnóstico.`,
+              "deleted",
+            );
+            toast.success("Se eliminó el paso del diagnóstico.");
+            setStepToDelete(null);
+          }}
+        />
       )}
     </main>
   );

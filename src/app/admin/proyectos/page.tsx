@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { AdminListFilters } from "@/components/admin/admin-list-filters/AdminListFilters";
+import { AdminDeleteDialog } from "@/components/admin/admin-delete-dialog/AdminDeleteDialog";
 import { AdminPagination } from "@/components/admin/admin-pagination/AdminPagination";
 import { AdminProjectCard } from "@/components/admin/admin-project-card/AdminProjectCard";
 import { AdminProjectEditor } from "@/components/admin/admin-project-editor/AdminProjectEditor";
@@ -10,6 +11,8 @@ import { releaseImagePreview } from "@/components/admin/cloudinary-image-upload/
 import { useAdminActivityStore } from "@/hooks/useAdminActivityStore";
 import { usePagination } from "@/hooks/usePagination";
 import { useProjectsStore } from "@/hooks/useProjectsStore";
+import { useServicesStore } from "@/hooks/useServicesStore";
+import { projectSchema } from "@/lib/api-schemas";
 import {
   createEmptyProject,
   getProjectCover,
@@ -17,6 +20,7 @@ import {
   updateProjectCover,
 } from "@/lib/admin-projects";
 import { ImageService } from "@/services/ImageService";
+import { describeZodIssues } from "@/lib/form-validation";
 import type { ProjectStatus, ProjectViewModel } from "@/types/project";
 import "./_proyectos.scss";
 
@@ -24,8 +28,29 @@ type StatusFilter = "ALL" | ProjectStatus;
 
 const PROJECTS_PER_PAGE = 6;
 
+const PROJECT_FIELD_LABELS = {
+  title: "Título",
+  slug: "Slug",
+  clientName: "Cliente",
+  year: "Año",
+  shortDescription: "Descripción corta",
+  displayOrder: "Orden",
+  images: "Portada",
+  challenge: "El desafío",
+  approach: "El enfoque de Hello",
+  solution: "La solución",
+  results: "Resultados y entregables",
+  services: "Servicios asociados",
+  externalLink: "Instagram, sitio web o video",
+  instagramUrl: "Instagram",
+  websiteUrl: "Sitio web",
+  videoUrl: "Video",
+};
+
 export default function AdminProjectsPage() {
-  const { projects, isLoading, error, saveProjects } = useProjectsStore();
+  const { projects, isLoading, error, deleteProject, saveProjects } =
+    useProjectsStore();
+  const { services } = useServicesStore();
   const { addActivity } = useAdminActivityStore();
   const [editing, setEditing] = useState<ProjectViewModel | null>(null);
   const [pendingCoverFiles, setPendingCoverFiles] = useState<File[]>([]);
@@ -35,6 +60,8 @@ export default function AdminProjectsPage() {
   const [saveError, setSaveError] = useState("");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<StatusFilter>("ALL");
+  const [projectToDelete, setProjectToDelete] =
+    useState<ProjectViewModel | null>(null);
 
   useEffect(() => {
     if (!editing) {
@@ -85,10 +112,25 @@ export default function AdminProjectsPage() {
     project: ProjectViewModel,
     nextStatus: ProjectStatus,
   ) => {
+    const updatedProject = { ...project, status: nextStatus };
+    const validation = projectSchema.safeParse(updatedProject);
+
+    if (!validation.success) {
+      const message = describeZodIssues(
+        validation.error.issues,
+        PROJECT_FIELD_LABELS,
+      );
+
+      openEditor(updatedProject);
+      setSaveError(message);
+      toast.error(message);
+      return;
+    }
+
     try {
       await saveProjects(
         projects.map((item) =>
-          item.id === project.id ? { ...item, status: nextStatus } : item,
+          item.id === project.id ? updatedProject : item,
         ),
       );
     } catch (statusError) {
@@ -174,10 +216,32 @@ export default function AdminProjectsPage() {
   };
 
   const saveProject = async (project: ProjectViewModel) => {
+    const normalizedProject = {
+      ...project,
+      title: project.title.trim(),
+      slug: project.slug.trim(),
+      clientName: project.clientName.trim(),
+      shortDescription: project.shortDescription.trim(),
+      services: project.services
+        .map((service) => service.trim())
+        .filter(Boolean),
+    };
+    const projectForValidation = pendingCoverFiles[0]
+      ? updateProjectCover(normalizedProject, "pending-cover", "pending-cover")
+      : normalizedProject;
+    const validation = projectSchema.safeParse(projectForValidation);
+
+    if (!validation.success) {
+      setSaveError(
+        describeZodIssues(validation.error.issues, PROJECT_FIELD_LABELS),
+      );
+      return;
+    }
+
     setIsSaving(true);
     setSaveError("");
 
-    let preparedProject = project;
+    let preparedProject = normalizedProject;
     const uploadedPublicIds: string[] = [];
     const publicIdsToRemove = [...removedPublicIds];
 
@@ -353,6 +417,7 @@ export default function AdminProjectsPage() {
             project={project}
             statusLabel={statusLabels[project.status]}
             key={project.id}
+            onDelete={setProjectToDelete}
             onEdit={openEditor}
             onStatusChange={(selectedProject, nextStatus) =>
               void updateProjectStatus(selectedProject, nextStatus)
@@ -381,6 +446,9 @@ export default function AdminProjectsPage() {
       />
       {editing && (
         <AdminProjectEditor
+          availableServices={[...services].sort(
+            (first, second) => first.displayOrder - second.displayOrder,
+          )}
           project={editing}
           coverFiles={pendingCoverFiles}
           galleryFiles={pendingGalleryFiles}
@@ -391,11 +459,34 @@ export default function AdminProjectsPage() {
           onClose={closeEditor}
           onCoverFilesChange={setPendingCoverFiles}
           onGalleryFilesChange={setPendingGalleryFiles}
+          onValidationError={setSaveError}
           onRemoveCover={removeExistingCover}
           onRemoveGalleryImage={removeExistingGalleryImage}
           onSubmit={(project) => void saveProject(project)}
         />
-      )}{" "}
+      )}
+
+      {projectToDelete && (
+        <AdminDeleteDialog
+          resourceType="proyecto"
+          resourceName={projectToDelete.title}
+          consequence="Se eliminarán el proyecto, su portada, su galería y sus asociaciones. Esta acción no se puede deshacer."
+          onClose={() => setProjectToDelete(null)}
+          onConfirm={async (password) => {
+            const projectName = projectToDelete.title;
+            const result = await deleteProject(projectToDelete.id, password);
+
+            addActivity(`Se eliminó el proyecto ${projectName}.`, "deleted");
+            toast.success(`Se eliminó ${projectName}.`);
+
+            if (result.warning) {
+              toast.warning(result.warning);
+            }
+
+            setProjectToDelete(null);
+          }}
+        />
+      )}
     </main>
   );
 }

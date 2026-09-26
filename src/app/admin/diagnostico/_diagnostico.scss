@@ -50,7 +50,7 @@
 
     > article {
       display: grid;
-      grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+      grid-template-columns: auto minmax(0, 1fr) auto auto;
       align-items: center;
       gap: 1rem;
       padding: 1.25rem;
@@ -59,25 +59,41 @@
       background: rgba($hero-surface-color, 0.8);
       box-shadow: 0 1.5rem 3rem -2.25rem rgba($color-text-tertiary, 0.4);
 
-      > button {
-        min-height: 2.375rem;
-        padding: 0.5625rem 0.875rem;
-        border: 0.0625rem solid $hero-border-color;
-        border-radius: 62.4375rem;
-        background: $hero-surface-color;
-        color: $color-text;
-        cursor: pointer;
-        font: inherit;
-        font-size: $font-size-small;
+      .adminDiagnosticActions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.5rem;
 
-        &:hover {
-          border-color: $color-primary-button;
-          color: $color-primary-button;
-        }
+        button {
+          min-height: 2.375rem;
+          padding: 0.5625rem 0.875rem;
+          border: 0.0625rem solid $hero-border-color;
+          border-radius: 62.4375rem;
+          background: $hero-surface-color;
+          color: $color-text;
+          cursor: pointer;
+          font: inherit;
+          font-size: $font-size-small;
 
-        &:disabled {
-          cursor: default;
-          opacity: 0.6;
+          &:hover {
+            border-color: $color-primary-button;
+            color: $color-primary-button;
+          }
+
+          &:disabled {
+            cursor: default;
+            opacity: 0.6;
+          }
+
+          &.adminDiagnosticDelete {
+            color: $color-error-strong;
+
+            &:hover {
+              border-color: $color-error;
+              color: $color-error-strong;
+            }
+          }
         }
       }
     }
@@ -428,10 +444,16 @@
 
   @media (max-width: 55rem) {
     .adminDiagnosticList > article {
-      grid-template-columns: auto minmax(0, 1fr) auto auto;
+      grid-template-columns: auto minmax(0, 1fr);
 
-      .adminDiagnosticStatus {
+      .adminDiagnosticStatus,
+      .adminDiagnosticActions {
         grid-column: 2;
+        justify-self: start;
+      }
+
+      .adminDiagnosticActions {
+        justify-content: flex-start;
       }
     }
 
@@ -455,7 +477,7 @@
       grid-template-columns: auto minmax(0, 1fr);
 
       .adminDiagnosticStatus,
-      > button {
+      .adminDiagnosticActions {
         grid-column: 2;
         justify-self: start;
       }

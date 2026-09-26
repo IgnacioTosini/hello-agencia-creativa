@@ -1,5 +1,6 @@
 import type { InquirySource, Prisma } from "@prisma/client";
 import { NextRequest } from "next/server";
+import { authorizeAdminDeletion } from "@/lib/admin-delete";
 import { requireAdmin } from "@/lib/admin-api";
 import { inquirySchema, inquiryStatusSchema } from "@/lib/api-schemas";
 import { parseJsonBody } from "@/lib/api-validation";
@@ -167,3 +168,29 @@ export async function PATCH(request: NextRequest) {
 
   return Response.json(toInquiryViewModel(inquiry));
 }
+
+async function deleteInquiry(request: NextRequest) {
+  const authorization = await authorizeAdminDeletion(request);
+
+  if (!authorization.authorized) {
+    return authorization.response;
+  }
+
+  const inquiry = await prisma.inquiry.findUnique({
+    where: { id: authorization.data.id },
+    select: { id: true },
+  });
+
+  if (!inquiry) {
+    return Response.json(
+      { error: "La consulta ya no existe." },
+      { status: 404 },
+    );
+  }
+
+  await prisma.inquiry.delete({ where: { id: inquiry.id } });
+
+  return Response.json({ deletedId: inquiry.id });
+}
+
+export const DELETE = withApiErrors(deleteInquiry);

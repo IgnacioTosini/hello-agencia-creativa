@@ -1,7 +1,7 @@
 "use client";
 
 import { createClientStore } from "@/lib/create-client-store";
-import { readApiError } from "@/lib/client-api";
+import { readApiError, requestAdminDeletion } from "@/lib/client-api";
 import type { DiagnosticStep } from "@/types/diagnostic";
 
 const store = createClientStore<DiagnosticStep[]>({
@@ -28,11 +28,25 @@ const saveDiagnostic = async (steps: DiagnosticStep[]) => {
   store.setData((await response.json()) as DiagnosticStep[]);
 };
 
+const deleteDiagnosticStep = async (id: string, password: string) => {
+  const result = await requestAdminDeletion(
+    "/api/diagnostic",
+    id,
+    password,
+    "No se pudo eliminar el paso del diagnóstico.",
+  );
+
+  store.setData(store.getData().filter((step) => step.id !== id));
+
+  return result;
+};
+
 export const useDiagnosticStore = () => {
   const state = store.useStore();
   return {
     steps: state.data,
     ...state,
+    deleteDiagnosticStep,
     saveDiagnostic,
     refresh: store.refresh,
   };

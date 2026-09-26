@@ -1,4 +1,5 @@
-export type AdminActivityKind = "created" | "updated" | "visibility";
+export type AdminActivityKind =
+  "created" | "updated" | "visibility" | "deleted";
 
 export type AdminActivity = {
   id: string;

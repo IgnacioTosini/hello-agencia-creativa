@@ -2,7 +2,7 @@
 
 .adminProjectCard {
   display: grid;
-  grid-template-columns: 7rem minmax(0, 1fr) auto auto auto;
+  grid-template-columns: 7rem minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 1rem;
   padding: 1rem;
@@ -10,23 +10,6 @@
   border-radius: 1rem;
   background: rgba($hero-surface-color, 0.76);
   box-shadow: 0 1.25rem 2.5rem -2rem rgba($color-text-tertiary, 0.3);
-
-  > button {
-    min-height: 2.375rem;
-    padding: 0.5rem 0.875rem;
-    border: 0.0625rem solid $hero-border-color;
-    border-radius: 62.4375rem;
-    background: rgba($hero-surface-color, 0.68);
-    color: $color-text;
-    cursor: pointer;
-    font: inherit;
-    font-size: $font-size-small;
-
-    &:hover {
-      border-color: $color-primary-button;
-      color: $color-primary-button;
-    }
-  }
 
   .adminProjectCardImage {
     position: relative;
@@ -91,12 +74,50 @@
     }
   }
 
-  @media (max-width: 58rem) {
-    grid-template-columns: 7rem minmax(0, 1fr) auto auto;
+  .adminProjectCardActions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
 
-    .adminProjectCardStatus {
+    button {
+      min-height: 2.375rem;
+      padding: 0.5rem 0.875rem;
+      border: 0.0625rem solid $hero-border-color;
+      border-radius: 62.4375rem;
+      background: rgba($hero-surface-color, 0.68);
+      color: $color-text;
+      cursor: pointer;
+      font: inherit;
+      font-size: $font-size-small;
+
+      &:hover {
+        border-color: $color-primary-button;
+        color: $color-primary-button;
+      }
+
+      &.adminProjectCardDelete {
+        color: $color-error-strong;
+
+        &:hover {
+          border-color: $color-error;
+          color: $color-error-strong;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 58rem) {
+    grid-template-columns: 7rem minmax(0, 1fr);
+
+    .adminProjectCardStatus,
+    .adminProjectCardActions {
       grid-column: 2;
       justify-self: start;
+    }
+
+    .adminProjectCardActions {
+      justify-content: flex-start;
     }
   }
 
@@ -108,7 +129,7 @@
     }
 
     .adminProjectCardStatus,
-    > button {
+    .adminProjectCardActions {
       grid-column: 2;
       justify-self: start;
     }

@@ -191,6 +191,9 @@
       &.gray {
         background: $color-text-secondary;
       }
+      &.red {
+        background: $color-error-strong;
+      }
     }
   }
 

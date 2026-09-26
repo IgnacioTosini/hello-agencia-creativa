@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { SiteContentPreview } from "./SiteContentPreview";
+import { RequiredMark } from "@/components/ui/RequiredMark";
 import {
   CloudinaryImageUpload,
   getImagePreviewUrl,
@@ -33,6 +34,7 @@ export function SiteContentEditor() {
   }>({ main: [], detail: [] });
   const [isSaving, setIsSaving] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
 
   const updateDraft = (updater: (current: SiteContent) => SiteContent) => {
     if (!content) {
@@ -123,10 +125,12 @@ export function SiteContentEditor() {
     const budgets = draft.contactBudgets.map((budget) => budget.trim());
 
     if (budgets.length === 0 || budgets.some((budget) => !budget)) {
+      setShowValidation(true);
       toast.error("Dejá al menos una opción de presupuesto y completá todas.");
       return;
     }
 
+    setShowValidation(false);
     setIsSaving(true);
     const storedHero = content?.homeSections.find(
       (section) => section.id === "hero",
@@ -233,6 +237,7 @@ export function SiteContentEditor() {
     setHeroImageFiles({ main: [], detail: [] });
     setDraftState(null);
     setIsPreviewOpen(false);
+    setShowValidation(false);
     toast.info("Se descartaron los cambios pendientes.");
   };
 
@@ -441,7 +446,9 @@ export function SiteContentEditor() {
         <section>
           <div className="siteContentPanelHeading">
             <p>Contacto</p>
-            <h2>Presupuestos aproximados</h2>
+            <h2>
+              Presupuestos aproximados <RequiredMark />
+            </h2>
             <span className="siteContentSectionNote">
               Estas opciones aparecen en el selector del formulario de contacto.
             </span>
@@ -452,8 +459,12 @@ export function SiteContentEditor() {
               <article key={`budget-${index}`}>
                 <input
                   aria-label={`Opción de presupuesto ${index + 1}`}
+                  aria-invalid={showValidation && !budget.trim()}
                   value={budget}
-                  onChange={(event) => updateBudget(index, event.target.value)}
+                  onChange={(event) => {
+                    updateBudget(index, event.target.value);
+                    setShowValidation(false);
+                  }}
                 />
                 <button
                   type="button"
@@ -477,6 +488,12 @@ export function SiteContentEditor() {
               </article>
             ))}
           </div>
+
+          {showValidation && (
+            <p className="formValidationSummary" aria-live="polite">
+              Completá las opciones de presupuesto marcadas.
+            </p>
+          )}
 
           <button
             className="siteContentAddBudget"

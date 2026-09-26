@@ -32,6 +32,10 @@ const getActivityTone = (activity: AdminActivity) => {
     return "purple";
   }
 
+  if (activity.kind === "deleted") {
+    return "red";
+  }
+
   return "gray";
 };
 

@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { RequiredMark } from "@/components/ui/RequiredMark";
+import { describeInvalidForm } from "@/lib/form-validation";
 
 type AdminLoginFormProps = {
   nextPath: string;
@@ -44,24 +46,34 @@ export function AdminLoginForm({ nextPath }: AdminLoginFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="admin-password">Contraseña</label>
+    <form
+      onInvalid={(event) => setError(describeInvalidForm(event.currentTarget))}
+      onSubmit={handleSubmit}
+    >
+      <label htmlFor="admin-password">
+        Contraseña <RequiredMark />
+      </label>
       <input
         id="admin-password"
+        name="password"
+        data-field-label="Contraseña"
         type="password"
         value={password}
         autoComplete="current-password"
         autoFocus
         required
         disabled={isSubmitting}
-        onChange={(event) => setPassword(event.target.value)}
+        onChange={(event) => {
+          setPassword(event.target.value);
+          setError("");
+        }}
       />
 
       <p className="adminLoginError" aria-live="polite">
         {error}
       </p>
 
-      <button type="submit" disabled={isSubmitting || !password}>
+      <button type="submit" disabled={isSubmitting}>
         {isSubmitting ? "Ingresando…" : "Ingresar al panel"}
         <span aria-hidden="true">→</span>
       </button>

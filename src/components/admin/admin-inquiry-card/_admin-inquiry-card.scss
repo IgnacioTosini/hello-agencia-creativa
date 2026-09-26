@@ -179,6 +179,19 @@
     gap: 0.5rem;
   }
 
+  .adminInquiryActions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+
+    .adminInquiryDelete {
+      border-color: rgba($color-error, 0.34);
+      background: $hero-surface-color;
+      color: $color-error-strong;
+    }
+  }
+
   @media (max-width: 42rem) {
     padding: 1.125rem;
 
@@ -197,6 +210,11 @@
 
       button {
         width: 100%;
+      }
+
+      .adminInquiryActions {
+        width: 100%;
+        flex-direction: column;
       }
     }
   }

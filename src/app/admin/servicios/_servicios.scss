@@ -56,7 +56,7 @@
 
     article {
       display: grid;
-      grid-template-columns: 3rem minmax(0, 1fr) auto auto auto;
+      grid-template-columns: 3rem minmax(0, 1fr) auto auto;
       align-items: center;
       gap: 1rem;
       padding: 1.25rem;
@@ -65,25 +65,41 @@
       background: rgba($hero-surface-color, 0.76);
       box-shadow: 0 1.25rem 2.5rem -2rem rgba($color-text-tertiary, 0.3);
 
-      > button {
-        min-height: 2.375rem;
-        flex: 0 0 auto;
-        padding: 0.5rem 0.875rem;
-        border: 0.0625rem solid $hero-border-color;
-        border-radius: 62.4375rem;
-        background: rgba($hero-surface-color, 0.68);
-        color: $color-text;
-        cursor: pointer;
-        font: inherit;
-        font-size: $font-size-small;
-        white-space: nowrap;
-        transition:
-          border-color 180ms ease,
-          color 180ms ease;
+      .adminCrudActions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0.5rem;
 
-        &:hover {
-          border-color: $color-primary-button;
-          color: $color-primary-button;
+        button {
+          min-height: 2.375rem;
+          flex: 0 0 auto;
+          padding: 0.5rem 0.875rem;
+          border: 0.0625rem solid $hero-border-color;
+          border-radius: 62.4375rem;
+          background: rgba($hero-surface-color, 0.68);
+          color: $color-text;
+          cursor: pointer;
+          font: inherit;
+          font-size: $font-size-small;
+          white-space: nowrap;
+          transition:
+            border-color 180ms ease,
+            color 180ms ease;
+
+          &:hover {
+            border-color: $color-primary-button;
+            color: $color-primary-button;
+          }
+
+          &.adminCrudDelete {
+            color: $color-error-strong;
+
+            &:hover {
+              border-color: $color-error;
+              color: $color-error-strong;
+            }
+          }
         }
       }
     }
@@ -270,11 +286,16 @@
   @media (max-width: 54rem) {
     .adminCrudList {
       article {
-        grid-template-columns: 3rem minmax(0, 1fr) auto auto;
+        grid-template-columns: 3rem minmax(0, 1fr);
 
-        .adminCrudStatus {
+        .adminCrudStatus,
+        .adminCrudActions {
           grid-column: 2;
           justify-self: start;
+        }
+
+        .adminCrudActions {
+          justify-content: flex-start;
         }
       }
     }
@@ -291,7 +312,7 @@
         grid-template-columns: 3rem minmax(0, 1fr);
 
         .adminCrudStatus,
-        > button {
+        .adminCrudActions {
           grid-column: 2;
           justify-self: start;
         }

@@ -3,6 +3,9 @@
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useServicesStore } from "@/hooks/useServicesStore";
+import { RequiredMark } from "@/components/ui/RequiredMark";
+import { inquirySchema } from "@/lib/api-schemas";
+import { describeInvalidForm, describeZodIssues } from "@/lib/form-validation";
 import type { InquiryFormData } from "@/types/inquiry";
 import "./_contact.scss";
 import { useContactFormGsap } from "./contact.gsap";
@@ -21,6 +24,7 @@ export const ContactForm = ({
   const { services } = useServicesStore();
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
   const [form, setForm] = useState<InquiryFormData>({
     name: "",
     email: "",
@@ -34,11 +38,30 @@ export const ContactForm = ({
   });
 
   const updateField = (field: keyof InquiryFormData, value: string) => {
+    setFormError("");
     setForm((current) => ({ ...current, [field]: value }));
   };
 
   const submitInquiry = async () => {
+    const validation = inquirySchema.safeParse(form);
+
+    if (!validation.success) {
+      setFormError(
+        describeZodIssues(validation.error.issues, {
+          name: "Nombre",
+          email: "Email",
+          whatsapp: "WhatsApp",
+          brandName: "Nombre de la marca",
+          serviceSlug: "Servicio de interés",
+          budget: "Presupuesto aproximado",
+          message: "Mensaje",
+        }),
+      );
+      return;
+    }
+
     setIsSubmitting(true);
+    setFormError("");
 
     try {
       const response = await fetch("/api/inquiries", {
@@ -57,11 +80,12 @@ export const ContactForm = ({
       setSubmitted(true);
       toast.success("Recibimos tu consulta. Te vamos a contactar pronto.");
     } catch (error) {
-      toast.error(
+      const message =
         error instanceof Error
           ? error.message
-          : "No se pudo enviar la consulta.",
-      );
+          : "No se pudo enviar la consulta.";
+      setFormError(message);
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }
@@ -71,22 +95,34 @@ export const ContactForm = ({
     <form
       ref={formRef}
       className="contactForm"
+      onInvalid={(event) =>
+        setFormError(describeInvalidForm(event.currentTarget))
+      }
       onSubmit={(event) => {
         event.preventDefault();
         void submitInquiry();
       }}
     >
       <label>
-        Nombre
+        <span>
+          Nombre <RequiredMark />
+        </span>
         <input
+          name="name"
+          data-field-label="Nombre"
+          minLength={2}
           required
           value={form.name}
           onChange={(event) => updateField("name", event.target.value)}
         />
       </label>
       <label>
-        Email
+        <span>
+          Email <RequiredMark />
+        </span>
         <input
+          name="email"
+          data-field-label="Email"
           required
           type="email"
           value={form.email}
@@ -96,6 +132,8 @@ export const ContactForm = ({
       <label>
         WhatsApp
         <input
+          name="whatsapp"
+          data-field-label="WhatsApp"
           value={form.whatsapp}
           onChange={(event) => updateField("whatsapp", event.target.value)}
         />
@@ -103,6 +141,8 @@ export const ContactForm = ({
       <label>
         Nombre de la marca
         <input
+          name="brandName"
+          data-field-label="Nombre de la marca"
           value={form.brandName}
           onChange={(event) => updateField("brandName", event.target.value)}
         />
@@ -110,6 +150,8 @@ export const ContactForm = ({
       <label>
         Servicio de interés
         <select
+          name="serviceSlug"
+          data-field-label="Servicio de interés"
           value={form.serviceSlug}
           onChange={(event) => updateField("serviceSlug", event.target.value)}
         >
@@ -127,6 +169,8 @@ export const ContactForm = ({
       <label>
         Presupuesto aproximado
         <select
+          name="budget"
+          data-field-label="Presupuesto aproximado"
           value={form.budget}
           onChange={(event) => updateField("budget", event.target.value)}
         >
@@ -140,11 +184,18 @@ export const ContactForm = ({
       <label className="contactFormMessage">
         Mensaje
         <textarea
+          name="message"
+          data-field-label="Mensaje"
           placeholder="¿Qué está pasando hoy con tu marca?"
           value={form.message}
           onChange={(event) => updateField("message", event.target.value)}
         />
       </label>
+      {formError && (
+        <p className="formValidationSummary" aria-live="polite">
+          {formError}
+        </p>
+      )}
       <button type="submit" disabled={isSubmitting || submitted}>
         {isSubmitting
           ? "Enviando…"

@@ -1,8 +1,10 @@
 import type { Prisma } from "@prisma/client";
 import { NextRequest } from "next/server";
+import { authorizeAdminDeletion } from "@/lib/admin-delete";
 import { requireAdmin } from "@/lib/admin-api";
 import { diagnosticBodySchema } from "@/lib/api-schemas";
 import { parseJsonBody } from "@/lib/api-validation";
+import { withApiErrors } from "@/lib/api-errors";
 import { prisma } from "@/lib/prisma";
 import type { DiagnosticStep } from "@/types/diagnostic";
 
@@ -125,3 +127,29 @@ export async function PUT(request: NextRequest) {
 
   return Response.json(steps.map(toDiagnosticStep));
 }
+
+async function deleteDiagnosticStep(request: NextRequest) {
+  const authorization = await authorizeAdminDeletion(request);
+
+  if (!authorization.authorized) {
+    return authorization.response;
+  }
+
+  const step = await prisma.diagnosticStep.findUnique({
+    where: { id: authorization.data.id },
+    select: { id: true },
+  });
+
+  if (!step) {
+    return Response.json(
+      { error: "El paso del diagnóstico ya no existe." },
+      { status: 404 },
+    );
+  }
+
+  await prisma.diagnosticStep.delete({ where: { id: step.id } });
+
+  return Response.json({ deletedId: step.id });
+}
+
+export const DELETE = withApiErrors(deleteDiagnosticStep);

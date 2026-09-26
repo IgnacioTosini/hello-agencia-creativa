@@ -38,6 +38,7 @@ const answerLabels: Record<string, string> = {
 type AdminInquiryCardProps = {
   inquiry: InquiryViewModel;
   isUpdating: boolean;
+  onDelete: () => void;
   onStatusChange: (status: InquiryStatus) => void;
 };
 
@@ -85,6 +86,7 @@ const getStatusAction = (status: InquiryStatus) => {
 export function AdminInquiryCard({
   inquiry,
   isUpdating,
+  onDelete,
   onStatusChange,
 }: AdminInquiryCardProps) {
   const service = inquiry.service ?? inquiry.recommendedService;
@@ -155,13 +157,23 @@ export function AdminInquiryCard({
             </a>
           )}
         </div>
-        <button
-          type="button"
-          disabled={isUpdating}
-          onClick={() => onStatusChange(getNextStatus(inquiry.status))}
-        >
-          {isUpdating ? "Guardando…" : getStatusAction(inquiry.status)}
-        </button>
+        <div className="adminInquiryActions">
+          <button
+            type="button"
+            disabled={isUpdating}
+            onClick={() => onStatusChange(getNextStatus(inquiry.status))}
+          >
+            {isUpdating ? "Guardando…" : getStatusAction(inquiry.status)}
+          </button>
+          <button
+            className="adminInquiryDelete"
+            type="button"
+            disabled={isUpdating}
+            onClick={onDelete}
+          >
+            Eliminar
+          </button>
+        </div>
       </footer>
     </article>
   );

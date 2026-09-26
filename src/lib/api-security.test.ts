@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { inquirySchema, loginSchema } from "./api-schemas";
+import { adminDeleteSchema, inquirySchema, loginSchema } from "./api-schemas";
 import { checkRateLimit, clearRateLimitsForTests } from "./rate-limit";
 
 beforeEach(clearRateLimitsForTests);
@@ -14,6 +14,25 @@ describe("API validation", () => {
         name: "Cliente",
         email: "no-es-un-email",
         source: "CONTACT_FORM",
+      }).success,
+    ).toBe(false);
+  });
+
+  it("requires an id and password for destructive actions", () => {
+    expect(
+      adminDeleteSchema.safeParse({
+        id: "project-1",
+        password: "admin-password",
+      }).success,
+    ).toBe(true);
+    expect(adminDeleteSchema.safeParse({ id: "project-1" }).success).toBe(
+      false,
+    );
+    expect(
+      adminDeleteSchema.safeParse({
+        id: "project-1",
+        password: "admin-password",
+        bypass: true,
       }).success,
     ).toBe(false);
   });

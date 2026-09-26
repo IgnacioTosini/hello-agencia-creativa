@@ -2,12 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import { AdminDeleteDialog } from "@/components/admin/admin-delete-dialog/AdminDeleteDialog";
 import { AdminListFilters } from "@/components/admin/admin-list-filters/AdminListFilters";
 import { AdminPagination } from "@/components/admin/admin-pagination/AdminPagination";
 import {
   AdminInquiryCard,
   inquiryStatusLabels,
 } from "@/components/admin/admin-inquiry-card/AdminInquiryCard";
+import { useAdminActivityStore } from "@/hooks/useAdminActivityStore";
 import { useInquiriesStore } from "@/hooks/useInquiriesStore";
 import { usePagination } from "@/hooks/usePagination";
 import type { InquirySource, InquiryStatus } from "@/types/inquiry-enums";
@@ -20,12 +22,15 @@ type SourceFilter = "ALL" | InquirySource;
 const INQUIRIES_PER_PAGE = 6;
 
 export default function AdminInquiriesPage() {
-  const { inquiries, isLoading, error, updateInquiryStatus } =
+  const { inquiries, isLoading, error, deleteInquiry, updateInquiryStatus } =
     useInquiriesStore();
+  const { addActivity } = useAdminActivityStore();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<StatusFilter>("ALL");
   const [source, setSource] = useState<SourceFilter>("ALL");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [inquiryToDelete, setInquiryToDelete] =
+    useState<InquiryViewModel | null>(null);
 
   const filteredInquiries = useMemo(
     () =>
@@ -136,6 +141,7 @@ export default function AdminInquiriesPage() {
             inquiry={inquiry}
             isUpdating={updatingId === inquiry.id}
             key={inquiry.id}
+            onDelete={() => setInquiryToDelete(inquiry)}
             onStatusChange={(nextStatus) =>
               void changeStatus(inquiry, nextStatus)
             }
@@ -159,6 +165,23 @@ export default function AdminInquiriesPage() {
         totalPages={totalPages}
         onPageChange={setCurrentPage}
       />
+
+      {inquiryToDelete && (
+        <AdminDeleteDialog
+          resourceType="consulta"
+          resourceName={`${inquiryToDelete.name}${inquiryToDelete.brandName ? ` · ${inquiryToDelete.brandName}` : ""}`}
+          consequence="Se eliminarán los datos de contacto, el mensaje y el estado de seguimiento. Esta acción no se puede deshacer."
+          onClose={() => setInquiryToDelete(null)}
+          onConfirm={async (password) => {
+            const inquiryName = inquiryToDelete.name;
+
+            await deleteInquiry(inquiryToDelete.id, password);
+            addActivity(`Se eliminó la consulta de ${inquiryName}.`, "deleted");
+            toast.success(`Se eliminó la consulta de ${inquiryName}.`);
+            setInquiryToDelete(null);
+          }}
+        />
+      )}
     </main>
   );
 }

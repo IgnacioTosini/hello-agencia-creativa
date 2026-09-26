@@ -10,6 +10,11 @@ export const loginSchema = z.strictObject({
   password: z.string().min(1).max(256),
 });
 
+export const adminDeleteSchema = z.strictObject({
+  id: z.string().min(1).max(180),
+  password: z.string().min(1).max(256),
+});
+
 export const serviceSchema = z.strictObject({
   id: z.string().min(1).max(128),
   name: z.string().trim().min(1).max(120),
@@ -42,39 +47,92 @@ const galleryImageSchema = z.strictObject({
   publicId: optionalText(500),
 });
 
-export const projectSchema = z.strictObject({
-  id: z.string().min(1).max(128),
-  title: z.string().trim().min(1).max(160),
-  slug: z
-    .string()
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
-    .max(180),
-  clientName: z.string().trim().min(1).max(160),
-  year: z.number().int().min(1900).max(2200),
-  category: z.enum([
-    "BRANDING",
-    "SOCIAL_MEDIA",
-    "CONTENT",
-    "CAMPAIGNS",
-    "GRAPHIC_DESIGN",
-    "PHOTO_VIDEO",
-  ]),
-  shortDescription: z.string().trim().min(1).max(500),
-  description: optionalText(10000),
-  challenge: z.string().max(10000),
-  approach: z.string().max(10000),
-  solution: z.string().max(10000),
-  results: z.string().max(10000),
-  featured: z.boolean(),
-  displayOrder: z.number().int().min(0).max(10000),
-  status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]),
-  images: z.array(projectImageSchema).max(100),
-  gallery: z.array(galleryImageSchema).max(100),
-  services: z.array(z.string().trim().min(1).max(120)).max(30),
-  instagramUrl: optionalUrl,
-  websiteUrl: optionalUrl,
-  videoUrl: optionalUrl,
-});
+export const projectSchema = z
+  .strictObject({
+    id: z.string().min(1).max(128),
+    title: z.string().trim().min(1).max(160),
+    slug: z
+      .string()
+      .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+      .max(180),
+    clientName: z.string().trim().min(1).max(160),
+    year: z.number().int().min(1900).max(2200),
+    category: z.enum([
+      "BRANDING",
+      "SOCIAL_MEDIA",
+      "CONTENT",
+      "CAMPAIGNS",
+      "GRAPHIC_DESIGN",
+      "PHOTO_VIDEO",
+    ]),
+    shortDescription: z.string().trim().min(1).max(500),
+    description: optionalText(10000),
+    challenge: z.string().max(10000),
+    approach: z.string().max(10000),
+    solution: z.string().max(10000),
+    results: z.string().max(10000),
+    featured: z.boolean(),
+    displayOrder: z.number().int().min(0).max(10000),
+    status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]),
+    images: z.array(projectImageSchema).max(100),
+    gallery: z.array(galleryImageSchema).max(100),
+    services: z.array(z.string().trim().min(1).max(120)).max(30),
+    instagramUrl: optionalUrl,
+    websiteUrl: optionalUrl,
+    videoUrl: optionalUrl,
+  })
+  .superRefine((project, context) => {
+    if (project.status !== "PUBLISHED") {
+      return;
+    }
+
+    if (!project.images.some((image) => image.type === "COVER")) {
+      context.addIssue({
+        code: "custom",
+        path: ["images"],
+        message: "La portada es obligatoria para publicar.",
+      });
+    }
+
+    if (project.services.length === 0) {
+      context.addIssue({
+        code: "custom",
+        path: ["services"],
+        message: "Seleccioná al menos un servicio para publicar.",
+      });
+    }
+
+    const caseFields = [
+      ["challenge", project.challenge],
+      ["approach", project.approach],
+      ["solution", project.solution],
+      ["results", project.results],
+    ] as const;
+
+    caseFields.forEach(([field, value]) => {
+      if (!value.trim()) {
+        context.addIssue({
+          code: "custom",
+          path: [field],
+          message: "Este apartado es obligatorio para publicar.",
+        });
+      }
+    });
+
+    const hasExternalLink = [
+      project.instagramUrl,
+      project.websiteUrl,
+      project.videoUrl,
+    ].some((url) => Boolean(url?.trim()));
+
+    if (!hasExternalLink) {
+      context.addIssue({
+        code: "custom",
+        path: ["externalLink"],
+        message: "Agregá Instagram, un sitio web o un video para publicar.",
+      });
+    }
+  });
 
 export const projectsBodySchema = z.strictObject({
   projects: z.array(projectSchema).max(500),

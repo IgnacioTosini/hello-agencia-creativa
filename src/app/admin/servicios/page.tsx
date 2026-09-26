@@ -2,9 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import { AdminDeleteDialog } from "@/components/admin/admin-delete-dialog/AdminDeleteDialog";
 import { AdminListFilters } from "@/components/admin/admin-list-filters/AdminListFilters";
+import { RequiredMark } from "@/components/ui/RequiredMark";
 import { useAdminActivityStore } from "@/hooks/useAdminActivityStore";
 import { useServicesStore } from "@/hooks/useServicesStore";
+import { serviceSchema } from "@/lib/api-schemas";
+import { describeInvalidForm, describeZodIssues } from "@/lib/form-validation";
 import type { ServiceViewModel } from "@/types/service";
 import "./_servicios.scss";
 
@@ -24,11 +28,15 @@ const createEmptyService = (order: number): ServiceViewModel => ({
 });
 
 export default function AdminServicesPage() {
-  const { services, isLoading, error, saveServices } = useServicesStore();
+  const { services, isLoading, error, deleteService, saveServices } =
+    useServicesStore();
   const { addActivity } = useAdminActivityStore();
   const [editing, setEditing] = useState<ServiceViewModel | null>(null);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
+  const [formError, setFormError] = useState("");
+  const [serviceToDelete, setServiceToDelete] =
+    useState<ServiceViewModel | null>(null);
 
   const filteredServices = useMemo(
     () =>
@@ -79,10 +87,37 @@ export default function AdminServicesPage() {
   };
 
   const saveService = async (service: ServiceViewModel) => {
+    const normalizedService = {
+      ...service,
+      name: service.name.trim(),
+      slug: service.slug.trim(),
+      whatIncludes: service.whatIncludes
+        .map((item) => item.trim())
+        .filter(Boolean),
+    };
+    const validation = serviceSchema.safeParse(normalizedService);
+
+    if (!validation.success) {
+      setFormError(
+        describeZodIssues(validation.error.issues, {
+          name: "Nombre",
+          slug: "Slug",
+          icon: "Ícono",
+          displayOrder: "Orden",
+          description: "Descripción",
+          problemSolved: "Problema que resuelve",
+          recommendedFor: "Recomendado para",
+          whatIncludes: "Qué incluye",
+        }),
+      );
+      return;
+    }
+
+    setFormError("");
     const isNewService = service.id === "new";
     const nextService = isNewService
-      ? { ...service, id: `service-${Date.now()}` }
-      : service;
+      ? { ...normalizedService, id: `service-${Date.now()}` }
+      : normalizedService;
     const nextServices = isNewService
       ? [...services, nextService]
       : services.map((item) => (item.id === service.id ? nextService : item));
@@ -122,7 +157,10 @@ export default function AdminServicesPage() {
         <button
           className="adminPrimaryButton"
           type="button"
-          onClick={() => setEditing(createEmptyService(services.length + 1))}
+          onClick={() => {
+            setFormError("");
+            setEditing(createEmptyService(services.length + 1));
+          }}
         >
           + Nuevo servicio
         </button>
@@ -157,12 +195,30 @@ export default function AdminServicesPage() {
             >
               {service.active ? "Activo" : "Oculto"}
             </span>
-            <button type="button" onClick={() => void toggleActive(service.id)}>
-              {service.active ? "Ocultar" : "Activar"}
-            </button>
-            <button type="button" onClick={() => setEditing(service)}>
-              Editar
-            </button>
+            <div className="adminCrudActions">
+              <button
+                type="button"
+                onClick={() => void toggleActive(service.id)}
+              >
+                {service.active ? "Ocultar" : "Activar"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setFormError("");
+                  setEditing(service);
+                }}
+              >
+                Editar
+              </button>
+              <button
+                className="adminCrudDelete"
+                type="button"
+                onClick={() => setServiceToDelete(service)}
+              >
+                Eliminar
+              </button>
+            </div>
           </article>
         ))}
 
@@ -185,6 +241,10 @@ export default function AdminServicesPage() {
           aria-label="Editar servicio"
         >
           <form
+            onInput={() => setFormError("")}
+            onInvalid={(event) =>
+              setFormError(describeInvalidForm(event.currentTarget))
+            }
             onSubmit={(event) => {
               event.preventDefault();
               void saveService(editing);
@@ -200,15 +260,22 @@ export default function AdminServicesPage() {
               <button
                 type="button"
                 aria-label="Cerrar"
-                onClick={() => setEditing(null)}
+                onClick={() => {
+                  setFormError("");
+                  setEditing(null);
+                }}
               >
                 ×
               </button>
             </header>
             <div className="adminFormGrid">
               <label>
-                Nombre
+                <span>
+                  Nombre <RequiredMark />
+                </span>
                 <input
+                  name="name"
+                  data-field-label="Nombre"
                   value={editing.name}
                   onChange={(event) =>
                     setEditing({ ...editing, name: event.target.value })
@@ -217,8 +284,13 @@ export default function AdminServicesPage() {
                 />
               </label>
               <label>
-                Slug
+                <span>
+                  Slug <RequiredMark />
+                </span>
                 <input
+                  name="slug"
+                  data-field-label="Slug"
+                  pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
                   value={editing.slug}
                   onChange={(event) =>
                     setEditing({ ...editing, slug: event.target.value })
@@ -229,6 +301,8 @@ export default function AdminServicesPage() {
               <label>
                 Ícono
                 <input
+                  name="icon"
+                  data-field-label="Ícono"
                   value={editing.icon ?? ""}
                   onChange={(event) =>
                     setEditing({ ...editing, icon: event.target.value })
@@ -236,8 +310,13 @@ export default function AdminServicesPage() {
                 />
               </label>
               <label>
-                Orden
+                <span>
+                  Orden <RequiredMark />
+                </span>
                 <input
+                  name="displayOrder"
+                  data-field-label="Orden"
+                  required
                   type="number"
                   min="1"
                   value={editing.displayOrder}
@@ -252,6 +331,8 @@ export default function AdminServicesPage() {
               <label className="fullWidth">
                 Descripción
                 <textarea
+                  name="description"
+                  data-field-label="Descripción"
                   value={editing.description ?? ""}
                   onChange={(event) =>
                     setEditing({ ...editing, description: event.target.value })
@@ -261,6 +342,8 @@ export default function AdminServicesPage() {
               <label className="fullWidth">
                 Problema que resuelve
                 <textarea
+                  name="problemSolved"
+                  data-field-label="Problema que resuelve"
                   value={editing.problemSolved ?? ""}
                   onChange={(event) =>
                     setEditing({
@@ -273,6 +356,8 @@ export default function AdminServicesPage() {
               <label className="fullWidth">
                 Recomendado para
                 <textarea
+                  name="recommendedFor"
+                  data-field-label="Recomendado para"
                   value={editing.recommendedFor ?? ""}
                   onChange={(event) =>
                     setEditing({
@@ -285,6 +370,8 @@ export default function AdminServicesPage() {
               <label className="fullWidth">
                 Qué incluye <small>Un elemento por línea</small>
                 <textarea
+                  name="whatIncludes"
+                  data-field-label="Qué incluye"
                   value={editing.whatIncludes.join("\n")}
                   onChange={(event) =>
                     setEditing({
@@ -295,8 +382,19 @@ export default function AdminServicesPage() {
                 />
               </label>
             </div>
+            {formError && (
+              <p className="formValidationSummary" aria-live="polite">
+                {formError}
+              </p>
+            )}
             <footer>
-              <button type="button" onClick={() => setEditing(null)}>
+              <button
+                type="button"
+                onClick={() => {
+                  setFormError("");
+                  setEditing(null);
+                }}
+              >
                 Cancelar
               </button>
               <button className="adminPrimaryButton" type="submit">
@@ -305,6 +403,23 @@ export default function AdminServicesPage() {
             </footer>
           </form>
         </div>
+      )}
+
+      {serviceToDelete && (
+        <AdminDeleteDialog
+          resourceType="servicio"
+          resourceName={serviceToDelete.name}
+          consequence="El servicio dejará de aparecer en proyectos, recomendaciones y consultas asociadas. Los demás registros se conservarán."
+          onClose={() => setServiceToDelete(null)}
+          onConfirm={async (password) => {
+            const serviceName = serviceToDelete.name;
+
+            await deleteService(serviceToDelete.id, password);
+            addActivity(`Se eliminó el servicio ${serviceName}.`, "deleted");
+            toast.success(`Se eliminó ${serviceName}.`);
+            setServiceToDelete(null);
+          }}
+        />
       )}
     </main>
   );

@@ -1,5 +1,29 @@
 @use "@/styles/variables" as *;
 
+input:user-invalid,
+select:user-invalid,
+textarea:user-invalid,
+[aria-invalid="true"] {
+  border-color: $color-error !important;
+  box-shadow: 0 0 0 0.1875rem rgba($color-error, 0.12) !important;
+}
+
+.formValidationSummary {
+  padding: 0.75rem 0.875rem;
+  border: 0.0625rem solid rgba($color-error, 0.28);
+  border-radius: 0.75rem;
+  background: rgba($color-error, 0.08);
+  color: $color-error;
+  font-size: $font-size-small;
+  line-height: 1.45;
+}
+
+.requiredMark {
+  margin-left: 0.1875rem;
+  color: $color-error;
+  font-weight: $font-weight-bold;
+}
+
 :root {
   --navbar-height: clamp(4.75rem, 9vw, 6rem);
 }

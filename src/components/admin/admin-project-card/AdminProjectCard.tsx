@@ -6,6 +6,7 @@ import "./_admin-project-card.scss";
 type AdminProjectCardProps = {
   project: ProjectViewModel;
   statusLabel: string;
+  onDelete: (project: ProjectViewModel) => void;
   onEdit: (project: ProjectViewModel) => void;
   onStatusChange: (project: ProjectViewModel, status: ProjectStatus) => void;
 };
@@ -16,6 +17,7 @@ const getCover = (project: ProjectViewModel) =>
 export function AdminProjectCard({
   project,
   statusLabel,
+  onDelete,
   onEdit,
   onStatusChange,
 }: AdminProjectCardProps) {
@@ -45,13 +47,24 @@ export function AdminProjectCard({
         {statusLabel}
       </span>
 
-      <button type="button" onClick={() => onStatusChange(project, nextStatus)}>
-        {project.status === "PUBLISHED" ? "Archivar" : "Publicar"}
-      </button>
-
-      <button type="button" onClick={() => onEdit(project)}>
-        Editar
-      </button>
+      <div className="adminProjectCardActions">
+        <button
+          type="button"
+          onClick={() => onStatusChange(project, nextStatus)}
+        >
+          {project.status === "PUBLISHED" ? "Archivar" : "Publicar"}
+        </button>
+        <button type="button" onClick={() => onEdit(project)}>
+          Editar
+        </button>
+        <button
+          className="adminProjectCardDelete"
+          type="button"
+          onClick={() => onDelete(project)}
+        >
+          Eliminar
+        </button>
+      </div>
     </article>
   );
 }

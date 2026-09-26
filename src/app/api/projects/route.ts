@@ -1,8 +1,11 @@
 import type { Prisma, Project, ProjectImage, Service } from "@prisma/client";
 import { NextRequest } from "next/server";
+import { authorizeAdminDeletion } from "@/lib/admin-delete";
 import { requireAdmin } from "@/lib/admin-api";
 import { projectsBodySchema } from "@/lib/api-schemas";
 import { parseJsonBody } from "@/lib/api-validation";
+import { withApiErrors } from "@/lib/api-errors";
+import { deleteCloudinaryImage } from "@/lib/cloudinary-images";
 import { prisma } from "@/lib/prisma";
 import type { ProjectViewModel } from "@/types/project";
 
@@ -32,7 +35,15 @@ const toProjectViewModel = (
   instagramUrl: project.instagramUrl,
   websiteUrl: project.websiteUrl,
   videoUrl: project.videoUrl,
-  images: project.images,
+  images: project.images.map((image) => ({
+    id: image.id,
+    projectId: image.projectId,
+    url: image.url,
+    publicId: image.publicId,
+    alt: image.alt,
+    type: image.type,
+    order: image.order,
+  })),
   gallery: project.images
     .filter((image) => image.type === "GALLERY")
     .map((image) => ({
@@ -183,3 +194,50 @@ export async function PUT(request: NextRequest) {
 
   return Response.json(projects.map(toProjectViewModel));
 }
+
+async function deleteProject(request: NextRequest) {
+  const authorization = await authorizeAdminDeletion(request);
+
+  if (!authorization.authorized) {
+    return authorization.response;
+  }
+
+  const project = await prisma.project.findUnique({
+    where: { id: authorization.data.id },
+    select: {
+      id: true,
+      images: { select: { publicId: true } },
+    },
+  });
+
+  if (!project) {
+    return Response.json(
+      { error: "El proyecto ya no existe." },
+      { status: 404 },
+    );
+  }
+
+  await prisma.project.delete({ where: { id: project.id } });
+
+  const publicIds = [
+    ...new Set(
+      project.images
+        .map((image) => image.publicId)
+        .filter((publicId): publicId is string => Boolean(publicId)),
+    ),
+  ];
+  const imageResults = await Promise.all(
+    publicIds.map((publicId) => deleteCloudinaryImage(publicId)),
+  );
+  const failedImages = imageResults.filter((result) => !result.success).length;
+
+  return Response.json({
+    deletedId: project.id,
+    warning:
+      failedImages > 0
+        ? `El proyecto se eliminó, pero ${failedImages} ${failedImages === 1 ? "imagen no pudo" : "imágenes no pudieron"} borrarse de Cloudinary.`
+        : undefined,
+  });
+}
+
+export const DELETE = withApiErrors(deleteProject);

@@ -1,7 +1,7 @@
 "use client";
 
 import { createClientStore } from "@/lib/create-client-store";
-import { readApiError } from "@/lib/client-api";
+import { readApiError, requestAdminDeletion } from "@/lib/client-api";
 import type { ServiceViewModel } from "@/types/service";
 
 const store = createClientStore<ServiceViewModel[]>({
@@ -28,11 +28,25 @@ const saveServices = async (services: ServiceViewModel[]) => {
   store.setData((await response.json()) as ServiceViewModel[]);
 };
 
+const deleteService = async (id: string, password: string) => {
+  const result = await requestAdminDeletion(
+    "/api/services",
+    id,
+    password,
+    "No se pudo eliminar el servicio.",
+  );
+
+  store.setData(store.getData().filter((service) => service.id !== id));
+
+  return result;
+};
+
 export const useServicesStore = () => {
   const state = store.useStore();
   return {
     services: state.data,
     ...state,
+    deleteService,
     saveServices,
     refresh: store.refresh,
   };
