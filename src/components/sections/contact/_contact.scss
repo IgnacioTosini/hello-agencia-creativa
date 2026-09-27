@@ -59,6 +59,20 @@
     grid-column: 1 / -1;
   }
 
+  .contactFormPrivacy {
+    grid-column: 1 / -1;
+    max-width: 38rem;
+    color: $color-text-secondary;
+    font-size: $font-size-small;
+    line-height: 1.6;
+
+    a {
+      color: $color-text-tertiary;
+      font-weight: $font-weight-semibold;
+      text-underline-offset: 0.18rem;
+    }
+  }
+
   button {
     width: fit-content;
     padding: 0.875rem 1.5rem;

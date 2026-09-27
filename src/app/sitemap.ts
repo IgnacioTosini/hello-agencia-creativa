@@ -4,7 +4,14 @@ import { prisma } from "@/lib/prisma";
 const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const routes = ["", "/servicios", "/proyectos", "/diagnostico", "/contacto"];
+  const routes = [
+    "",
+    "/servicios",
+    "/proyectos",
+    "/diagnostico",
+    "/contacto",
+    "/privacidad",
+  ];
   let projects: Array<{ slug: string; updatedAt: Date }> = [];
 
   try {

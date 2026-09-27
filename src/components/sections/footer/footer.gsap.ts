@@ -6,7 +6,7 @@ export function useFooterGsap(scope: RefObject<HTMLElement | null>) {
     start: "top bottom",
     groups: [
       {
-        selector: ".footerLogo, .footer p, .footerContact",
+        selector: ".footerLogo, .footer p, .footerLinks",
         from: { y: 16 },
         stagger: 0.08,
       },

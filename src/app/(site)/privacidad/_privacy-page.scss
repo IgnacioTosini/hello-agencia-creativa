@@ -1,0 +1,130 @@
+@use "@/styles/variables" as *;
+
+.privacyPage {
+  min-height: 100svh;
+  padding: 8rem max(2rem, calc((100% - 60.75rem) / 2)) 6rem;
+  background:
+    radial-gradient(
+      ellipse at 0% 8%,
+      rgba($color-text-tertiary, 0.14),
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 100% 28%,
+      rgba($hero-accent-color, 0.16),
+      transparent 40%
+    ),
+    $hero-background-color;
+
+  .privacyPageHero {
+    max-width: 49rem;
+
+    .privacyPageEyebrow {
+      color: $color-text-tertiary;
+      font-size: $font-size-small;
+      font-weight: $font-weight-semibold;
+    }
+
+    h1 {
+      margin-top: 1.25rem;
+      color: $color-text;
+      font-family: $font-family-display;
+      font-size: clamp(3.25rem, 6vw, 5rem);
+      letter-spacing: -0.15rem;
+      line-height: 1;
+    }
+
+    .privacyPageIntroduction {
+      max-width: 44rem;
+      margin-top: 1.75rem;
+      color: $color-text-secondary;
+      font-size: $font-size-medium-large;
+      line-height: 1.7;
+    }
+
+    .privacyPageDate {
+      margin-top: 1rem;
+      color: $color-text-secondary;
+      font-size: $font-size-normal;
+    }
+  }
+
+  .privacyPageContent {
+    display: grid;
+    gap: 1rem;
+    max-width: 52rem;
+    margin: 3.5rem 0 0 auto;
+
+    section {
+      padding: 2rem;
+      border: 0.0625rem solid rgba($hero-border-color, 0.9);
+      border-radius: 1.25rem;
+      background: rgba($hero-surface-color, 0.8);
+      box-shadow: 0 1.5rem 3rem -2.5rem rgba($color-text-tertiary, 0.35);
+    }
+
+    h2 {
+      color: $color-text;
+      font-family: $font-family-display;
+      font-size: clamp(1.35rem, 3vw, 1.7rem);
+      line-height: 1.2;
+    }
+
+    p,
+    li {
+      color: $color-text-secondary;
+      font-size: $font-size-medium;
+      line-height: 1.75;
+    }
+
+    p,
+    ul {
+      margin-top: 1rem;
+    }
+
+    ul {
+      display: grid;
+      gap: 0.5rem;
+      padding-left: 1.25rem;
+    }
+
+    strong {
+      color: $color-text;
+      font-weight: $font-weight-semibold;
+    }
+
+    a {
+      color: $color-text-tertiary;
+      font-weight: $font-weight-semibold;
+      text-underline-offset: 0.2rem;
+
+      &:hover {
+        text-decoration-thickness: 0.125rem;
+      }
+
+      &:focus-visible {
+        border-radius: 0.25rem;
+        outline: 0.1875rem solid $border-color-secondary;
+        outline-offset: 0.25rem;
+      }
+    }
+  }
+
+  @media (max-width: 47.5rem) {
+    padding: 6.5rem 1.5rem 4rem;
+
+    .privacyPageHero {
+      h1 {
+        font-size: clamp(2.75rem, 13vw, 4rem);
+      }
+    }
+
+    .privacyPageContent {
+      margin-top: 2.5rem;
+
+      section {
+        padding: 1.5rem;
+      }
+    }
+  }
+}

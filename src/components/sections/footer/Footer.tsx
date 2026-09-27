@@ -18,9 +18,10 @@ export const Footer = () => {
         © {new Date().getFullYear()} Hello Agencia Creativa · Creado por Ignacio
         Tosini
       </p>
-      <a className="footerContact" href="#contacto">
-        Contacto
-      </a>
+      <nav className="footerLinks" aria-label="Enlaces del pie de página">
+        <Link href="/privacidad">Privacidad</Link>
+        <Link href="/contacto">Contacto</Link>
+      </nav>
     </footer>
   );
 };

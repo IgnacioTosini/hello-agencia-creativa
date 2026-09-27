@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Link from "next/link";
 import { toast } from "react-toastify";
 import { useServicesStore } from "@/hooks/useServicesStore";
 import { RequiredMark } from "@/components/ui/RequiredMark";
@@ -196,6 +197,10 @@ export const ContactForm = ({
           {formError}
         </p>
       )}
+      <p className="contactFormPrivacy">
+        Al enviar la consulta aceptás el tratamiento de tus datos según nuestra{" "}
+        <Link href="/privacidad">Política de privacidad</Link>.
+      </p>
       <button type="submit" disabled={isSubmitting || submitted}>
         {isSubmitting
           ? "Enviando…"

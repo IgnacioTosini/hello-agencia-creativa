@@ -231,6 +231,14 @@ export const DiagnosticFlow = () => {
             ← &nbsp;Volver
           </button>
         )}
+        {stepIndex === 0 && (
+          <p className="diagnosticPrivacyNotice">
+            Al completar el diagnóstico, guardaremos tus respuestas para generar
+            una recomendación y analizar las necesidades más frecuentes. Conocé
+            más en nuestra{" "}
+            <Link href="/privacidad">Política de privacidad</Link>.
+          </p>
+        )}
       </div>
     </section>
   );

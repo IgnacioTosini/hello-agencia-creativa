@@ -123,6 +123,18 @@
     cursor: pointer;
     font: inherit;
   }
+  .diagnosticPrivacyNotice {
+    margin-top: 1.5rem;
+    color: $color-text-secondary;
+    font-size: $font-size-small;
+    line-height: 1.6;
+
+    a {
+      color: $color-text-tertiary;
+      font-weight: $font-weight-semibold;
+      text-underline-offset: 0.18rem;
+    }
+  }
   .diagnosticResult {
     max-width: 60.75rem;
     margin-top: 3rem;
