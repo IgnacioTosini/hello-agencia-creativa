@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { AppToaster } from "@/components/ui/app-toaster/AppToaster";
+import { Analytics } from "@vercel/analytics/next"
 import "./globals.scss";
 
 const inter = Inter({
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         {children}
         <AppToaster />
+        <Analytics />
       </body>
     </html>
   );
