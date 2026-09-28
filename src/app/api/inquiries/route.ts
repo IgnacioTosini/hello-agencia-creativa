@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/admin-api";
 import { inquirySchema, inquiryStatusSchema } from "@/lib/api-schemas";
 import { parseJsonBody } from "@/lib/api-validation";
 import { withApiErrors } from "@/lib/api-errors";
+import { sendInquiryNotification } from "@/lib/inquiry-notification";
 import {
   checkRateLimit,
   getRequestIp,
@@ -146,6 +147,34 @@ async function createInquiry(request: NextRequest) {
     },
     include: inquiryInclude,
   });
+
+  try {
+    const notification = await sendInquiryNotification({
+      id: inquiry.id,
+      name: inquiry.name,
+      email: inquiry.email,
+      whatsapp: inquiry.whatsapp,
+      brandName: inquiry.brandName,
+      budget: inquiry.budget,
+      message: inquiry.message,
+      source: inquiry.source,
+      serviceName: inquiry.service?.name,
+      recommendedServiceName: inquiry.recommendedService?.name,
+      createdAt: inquiry.createdAt,
+      adminUrl: new URL("/admin/consultas", request.url).toString(),
+    });
+
+    if (!notification.sent) {
+      console.warn(
+        "La consulta se guardó, pero la notificación por email no está configurada.",
+      );
+    }
+  } catch (notificationError) {
+    console.error(
+      "La consulta se guardó, pero no se pudo enviar la notificación por email.",
+      notificationError,
+    );
+  }
 
   return Response.json(toInquiryViewModel(inquiry), { status: 201 });
 }

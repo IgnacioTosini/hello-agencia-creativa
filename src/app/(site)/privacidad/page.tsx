@@ -124,9 +124,11 @@ export default function PrivacyPage() {
           <h2>5. Almacenamiento y proveedores</h2>
           <p>
             El sitio utiliza proveedores de alojamiento, infraestructura web,
-            base de datos y gestión de imágenes. Estos proveedores procesan la
-            información únicamente para prestar sus servicios técnicos y pueden
-            alojarla en servidores ubicados fuera de Argentina.
+            base de datos, correo electrónico y gestión de imágenes. Los datos
+            de una consulta pueden enviarse mediante Gmail para avisar al equipo
+            responsable. Estos proveedores procesan la información para prestar
+            sus servicios técnicos y pueden alojarla en servidores ubicados
+            fuera de Argentina.
           </p>
           <p>
             Aplicamos medidas razonables para limitar el acceso y mantener la

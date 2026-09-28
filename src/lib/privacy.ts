@@ -1,4 +1,4 @@
-export const PRIVACY_POLICY_VERSION = "2026-09-26";
+export const PRIVACY_POLICY_VERSION = "2026-09-28";
 
 export const privacyContact = {
   responsibleName:
