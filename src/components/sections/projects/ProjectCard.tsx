@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { ProjectImage } from "@/components/ui/project-image/ProjectImage";
 import type { ProjectCardData } from "@/types/project";
 import { projectCategoryLabel } from "@/types/project";
 
@@ -10,10 +10,10 @@ export const ProjectCard = ({ project }: { project: ProjectCardData }) => {
     <article className="projectCard">
       <a className="projectCardImage" href={`/proyectos/${project.slug}`}>
         {cover ? (
-          <Image
+          <ProjectImage
             src={cover.url}
             alt={cover.alt ?? project.title}
-            fill
+            variant="card"
             sizes="(max-width: 47.5rem) 90vw, (max-width: 68.75rem) 45vw, 25rem"
           />
         ) : (

@@ -12,10 +12,9 @@
     display: block;
     aspect-ratio: 1.6;
     overflow: hidden;
-    background: $hero-border-color;
+    background: $color-text;
 
     img {
-      object-fit: cover;
       transition: transform 320ms ease;
     }
 
@@ -23,7 +22,7 @@
       display: grid;
       height: 100%;
       place-items: center;
-      color: $color-text-secondary;
+      color: $hero-surface-color;
       font-size: $font-size-small;
     }
     &:focus-visible {
@@ -32,7 +31,7 @@
     }
   }
 
-  &:hover .projectCardImage img {
+  &:hover .projectCardImage img:not(.isPortrait) {
     transform: scale(1.04);
   }
 

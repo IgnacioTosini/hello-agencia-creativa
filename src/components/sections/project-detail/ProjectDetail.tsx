@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { ProjectImage } from "@/components/ui/project-image/ProjectImage";
 import Link from "next/link";
 import { useRef } from "react";
 import type { ProjectViewModel } from "@/types/project";
@@ -50,12 +50,11 @@ export const ProjectDetail = ({ project }: { project: ProjectViewModel }) => {
         </header>
         {coverUrl && (
           <div className="projectDetailCover">
-            <Image
+            <ProjectImage
               src={coverUrl}
               alt={cover?.alt ?? project.title}
-              fill
-              priority
-              sizes="(max-width: 47.5rem) 92vw, 75rem"
+              preload
+              sizes="(max-width: 47.5rem) calc(100vw - 3rem), (max-width: 79.75rem) calc(100vw - 4rem), 75.75rem"
             />
           </div>
         )}

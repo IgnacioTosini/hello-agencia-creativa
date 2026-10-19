@@ -2,7 +2,7 @@ import {
   type ImageUploadFolder,
   isImageUploadFolder,
 } from "@/lib/image-upload-folders";
-import { validateImageFile } from "@/lib/image-upload-validation";
+import { prepareImageUpload } from "@/lib/prepare-image-upload";
 
 export type UploadedImage = { url: string; public_id: string };
 export type CloudinaryUploadResponse =
@@ -20,50 +20,6 @@ async function readError(response: Response, fallback: string) {
 }
 
 export class ImageService {
-  static async optimizeImage(file: File): Promise<File> {
-    const error = validateImageFile(file);
-    if (error) throw new Error(error);
-
-    const objectUrl = URL.createObjectURL(file);
-    try {
-      const image = new Image();
-      image.src = objectUrl;
-      await image.decode();
-      const ratio = Math.min(
-        1,
-        1920 / image.naturalWidth,
-        1920 / image.naturalHeight,
-      );
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.max(1, Math.round(image.naturalWidth * ratio));
-      canvas.height = Math.max(1, Math.round(image.naturalHeight * ratio));
-      const context = canvas.getContext("2d");
-      if (!context) throw new Error("No se pudo procesar la imagen.");
-
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
-      const blob = await new Promise<Blob>((resolve, reject) =>
-        canvas.toBlob(
-          (result) =>
-            result
-              ? resolve(result)
-              : reject(new Error("No se pudo convertir la imagen.")),
-          "image/webp",
-          0.85,
-        ),
-      );
-      if (blob.size >= file.size) return file;
-
-      const extension = blob.type === "image/webp" ? "webp" : "png";
-      return new File(
-        [blob],
-        `${file.name.replace(/\.[^.]+$/, "")}.${extension}`,
-        { type: blob.type },
-      );
-    } finally {
-      URL.revokeObjectURL(objectUrl);
-    }
-  }
-
   static async uploadImage(
     file: File,
     { folder }: { folder: ImageUploadFolder },
@@ -74,7 +30,7 @@ export class ImageService {
       }
 
       const form = new FormData();
-      form.append("file", await this.optimizeImage(file));
+      form.append("file", await prepareImageUpload(file));
       form.append("folder", folder);
       const response = await fetch("/api/upload-image", {
         method: "POST",

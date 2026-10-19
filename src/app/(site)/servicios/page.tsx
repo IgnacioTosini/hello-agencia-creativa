@@ -1,3 +1,4 @@
+import { ServicesPageHero } from "@/components/sections/services-page/ServicesPageHero";
 import { ServicesPageList } from "@/components/sections/services/ServicesPageList";
 import "@/components/sections/services-page/_services-page.scss";
 
@@ -11,20 +12,7 @@ export const metadata: Metadata = {
 export default function ServicesPage() {
   return (
     <main className="servicesPage">
-      <header className="servicesPageHero">
-        <p>Servicios</p>
-        <h1>
-          No hacemos más por hacer.
-          <br />
-          Hacemos lo que tu marca
-          <br />
-          necesita.
-        </h1>
-        <span>
-          Cada servicio parte de un problema concreto y se adapta al momento
-          real de tu marca.
-        </span>
-      </header>
+      <ServicesPageHero />
       <ServicesPageList />
     </main>
   );

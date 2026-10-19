@@ -27,13 +27,21 @@ export const Navbar = () => {
     closeMenu();
 
     if (
-      pathname !== "/" ||
       event.button !== 0 ||
       event.metaKey ||
       event.ctrlKey ||
       event.shiftKey ||
       event.altKey
     ) {
+      return;
+    }
+
+    if (pathname !== "/") {
+      // A full navigation disposes route-scoped GSAP triggers before the home
+      // page creates its own triggers. This avoids a ScrollTrigger refresh race.
+      event.preventDefault();
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- clear stale GSAP triggers before the home route mounts
+      window.location.assign("/");
       return;
     }
 
