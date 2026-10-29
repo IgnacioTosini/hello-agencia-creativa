@@ -9,11 +9,16 @@ import { ProjectCard } from "@/components/sections/projects/ProjectCard";
 import { getRelatedProjects } from "@/lib/related-projects";
 import type { DiagnosticSubmissionResult } from "@/types/diagnostic";
 import { useDiagnosticFlowGsap } from "./diagnostic-flow.gsap";
+import { DiagnosticLoading } from "./DiagnosticLoading";
 
 export const DiagnosticFlow = () => {
   const flowRef = useRef<HTMLElement>(null);
   const { projects } = useProjectsStore();
-  const { services } = useServicesStore();
+  const {
+    services,
+    isLoading: servicesLoading,
+    error: servicesError,
+  } = useServicesStore();
   const { steps, isLoading, error } = useDiagnosticStore();
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -35,7 +40,16 @@ export const DiagnosticFlow = () => {
     [steps],
   );
   const currentStep = diagnosticSteps[stepIndex];
-  useDiagnosticFlowGsap(flowRef, submission ? "result" : `step-${stepIndex}`);
+  const isResult =
+    stepIndex >= diagnosticSteps.length && diagnosticSteps.length > 0;
+  const isCalculating = isResult && (isSavingSubmission || servicesLoading);
+  const transitionTo = useDiagnosticFlowGsap(
+    flowRef,
+    isCalculating ? "calculating" : isResult ? "result" : `step-${stepIndex}`,
+    diagnosticSteps.length > 0
+      ? Math.min((stepIndex + 1) / diagnosticSteps.length, 1)
+      : 0,
+  );
   const calculatedRecommendation = useMemo(() => {
     const scores = new Map<string, number>();
 
@@ -73,6 +87,9 @@ export const DiagnosticFlow = () => {
   );
 
   const saveSubmission = async (completedAnswers: Record<string, string>) => {
+    const minimumDisplay = new Promise<void>((resolve) => {
+      window.setTimeout(resolve, 500);
+    });
     setIsSavingSubmission(true);
     setSubmissionError("");
 
@@ -98,6 +115,7 @@ export const DiagnosticFlow = () => {
           : "No pudimos guardar el resultado.",
       );
     } finally {
+      await minimumDisplay;
       setIsSavingSubmission(false);
     }
   };
@@ -105,24 +123,32 @@ export const DiagnosticFlow = () => {
   const selectAnswer = (value: string) => {
     const nextAnswers = { ...answers, [currentStep.key]: value };
 
-    setAnswers(nextAnswers);
-    setStepIndex((current) => current + 1);
+    transitionTo(() => {
+      setAnswers(nextAnswers);
+      setStepIndex((current) => current + 1);
 
-    if (stepIndex === diagnosticSteps.length - 1) {
-      void saveSubmission(nextAnswers);
-    }
+      if (stepIndex === diagnosticSteps.length - 1) {
+        void saveSubmission(nextAnswers);
+      }
+    });
   };
 
   const restart = () => {
-    setAnswers({});
-    setStepIndex(0);
-    setSubmission(null);
-    setSubmissionError("");
-    setIsSavingSubmission(false);
+    transitionTo(
+      () => {
+        setAnswers({});
+        setStepIndex(0);
+        setSubmission(null);
+        setSubmissionError("");
+        setIsSavingSubmission(false);
+      },
+      -1,
+      true,
+    );
   };
 
   if (isLoading) {
-    return <p className="diagnosticLoading">Cargando diagnóstico…</p>;
+    return <DiagnosticLoading phase="questions" />;
   }
 
   if (error || diagnosticSteps.length === 0) {
@@ -134,8 +160,30 @@ export const DiagnosticFlow = () => {
   }
 
   if (stepIndex >= diagnosticSteps.length) {
+    if (isCalculating) {
+      return <DiagnosticLoading phase="recommendation" />;
+    }
+
     if (!recommendation) {
-      return null;
+      return (
+        <section key="result" ref={flowRef} className="diagnosticResult">
+          <div className="diagnosticRecommendation">
+            <p className="diagnosticEyebrow">Tu recomendación</p>
+            <h2 tabIndex={-1}>Todavía no pudimos encontrar un servicio.</h2>
+            <p>
+              {servicesError ??
+                "No hay servicios activos disponibles para recomendarte ahora."}
+            </p>
+            <button
+              className="diagnosticSecondaryButton"
+              type="button"
+              onClick={restart}
+            >
+              ↻ &nbsp;Volver a empezar
+            </button>
+          </div>
+        </section>
+      );
     }
 
     const contactParams = new URLSearchParams({
@@ -144,9 +192,9 @@ export const DiagnosticFlow = () => {
     });
 
     return (
-      <section ref={flowRef} className="diagnosticResult">
+      <section key="result" ref={flowRef} className="diagnosticResult">
         <p className="diagnosticEyebrow">Tu recomendación</p>
-        <h2>Ya tenemos un punto de partida.</h2>
+        <h2 tabIndex={-1}>Ya tenemos un punto de partida.</h2>
         <p className="diagnosticResultNote">
           Esta recomendación es orientativa. Podemos ajustarla cuando conozcamos
           mejor tu marca y tus objetivos.
@@ -197,7 +245,11 @@ export const DiagnosticFlow = () => {
   }
 
   return (
-    <section ref={flowRef} className="diagnosticQuestion">
+    <section
+      key={`step-${stepIndex}`}
+      ref={flowRef}
+      className="diagnosticQuestion"
+    >
       <p className="diagnosticStepCounter">
         Paso {stepIndex + 1} de {diagnosticSteps.length}
       </p>
@@ -209,7 +261,7 @@ export const DiagnosticFlow = () => {
         />
       </div>
       <div className="diagnosticQuestionCard">
-        <h2>{currentStep.question}</h2>
+        <h2 tabIndex={-1}>{currentStep.question}</h2>
         <div className="diagnosticOptions">
           {currentStep.answers.map((answer) => (
             <button
@@ -226,7 +278,9 @@ export const DiagnosticFlow = () => {
           <button
             className="diagnosticBack"
             type="button"
-            onClick={() => setStepIndex((current) => current - 1)}
+            onClick={() =>
+              transitionTo(() => setStepIndex((current) => current - 1), -1)
+            }
           >
             ← &nbsp;Volver
           </button>

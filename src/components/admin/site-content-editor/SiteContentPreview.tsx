@@ -6,6 +6,7 @@ import { HomeSections } from "@/components/sections/home/HomeSections";
 import { Navbar } from "@/components/sections/navbar/Navbar";
 import type { SiteContent } from "@/types/site-content";
 import { useDialogFocus } from "@/hooks/useDialogFocus";
+import { SiteAnimationProvider } from "@/lib/gsap/SiteAnimationContext";
 
 type SiteContentPreviewProps = {
   content: SiteContent;
@@ -34,9 +35,11 @@ export function SiteContentPreview({
         </button>
       </header>
       <div>
-        <Navbar />
-        <HomeSections content={content} />
-        <Footer />
+        <SiteAnimationProvider enabled={false}>
+          <Navbar />
+          <HomeSections content={content} />
+          <Footer />
+        </SiteAnimationProvider>
       </div>
     </div>
   );

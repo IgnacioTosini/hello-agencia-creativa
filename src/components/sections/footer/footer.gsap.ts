@@ -1,11 +1,14 @@
 import gsap from "gsap";
 import { type RefObject, useLayoutEffect } from "react";
+import { useSiteAnimationsEnabled } from "@/lib/gsap/SiteAnimationContext";
 
 export function useFooterGsap(scope: RefObject<HTMLElement | null>) {
+  const animationsEnabled = useSiteAnimationsEnabled();
+
   useLayoutEffect(() => {
     const footer = scope.current;
 
-    if (!footer) return;
+    if (!footer || !animationsEnabled) return;
 
     const targets = gsap.utils.toArray<HTMLElement>(
       ".footerLogo, .footer p, .footerLinks",
@@ -45,5 +48,5 @@ export function useFooterGsap(scope: RefObject<HTMLElement | null>) {
       observer?.disconnect();
       context.revert();
     };
-  }, [scope]);
+  }, [scope, animationsEnabled]);
 }

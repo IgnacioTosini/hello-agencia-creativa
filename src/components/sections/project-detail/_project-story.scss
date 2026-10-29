@@ -1,0 +1,161 @@
+@use "@/styles/variables" as *;
+
+.projectDetail {
+  .projectStory {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: start;
+    padding: 5rem 0 3rem;
+  }
+
+  .projectStoryLead {
+    min-width: 0;
+
+    h2 {
+      max-width: 23rem;
+      color: $color-text;
+      font-size: clamp(1.8rem, 2.4vw, 2.4rem);
+      line-height: 1.14;
+      letter-spacing: -0.035em;
+    }
+  }
+
+  .projectExternalLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin: 1.4rem 0 0;
+
+    .projectInstagram {
+      margin: 0;
+    }
+  }
+
+  .projectStoryStage {
+    margin-top: 2rem;
+    overflow: hidden;
+    border: 1px solid rgba($hero-border-color, 0.8);
+    border-radius: 1.25rem;
+    background: rgba($hero-surface-color, 0.85);
+    box-shadow: 0 1.5rem 3rem -2rem rgba($color-text-tertiary, 0.35);
+  }
+
+  .projectStoryStageImages {
+    position: relative;
+    aspect-ratio: 1.35;
+    overflow: hidden;
+    background: $color-text;
+  }
+
+  .projectStoryStageImage {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+
+    &:first-child {
+      opacity: 1;
+    }
+
+    img {
+      object-fit: cover;
+    }
+  }
+
+  .projectStoryStageCaption {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.9rem 1.15rem;
+    color: $color-text-tertiary;
+    font-size: $font-size-small;
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.08em;
+  }
+
+  .projectStorySteps {
+    min-width: 0;
+  }
+
+  .projectStoryStep {
+    min-height: clamp(13rem, 34vh, 20rem);
+    padding: 1.5rem 0 2.5rem 1.5rem;
+    border-left: 2px solid $hero-border-color;
+    transition: border-color 250ms ease;
+
+    &.isActive {
+      border-left-color: $color-text-tertiary;
+    }
+
+    h3 {
+      margin-top: 0.8rem;
+      color: $color-text-tertiary;
+      font-size: $font-size-small;
+      font-weight: $font-weight-semibold;
+    }
+
+    p {
+      max-width: 42rem;
+      margin-top: 0.9rem;
+      color: $color-text;
+      font-size: $font-size-large;
+      line-height: 1.6;
+    }
+  }
+
+  .projectStoryStepNumber {
+    color: rgba($color-text-tertiary, 0.55);
+    font-size: $font-size-small;
+    font-weight: $font-weight-bold;
+    letter-spacing: 0.08em;
+  }
+
+  .projectStoryStepImage {
+    display: none;
+  }
+
+  @media (max-width: 68.75rem) {
+    .projectStory {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding-top: 4rem;
+    }
+
+    .projectStoryStage {
+      display: none;
+    }
+
+    .projectStoryStep {
+      min-height: 0;
+      padding-bottom: 2.75rem;
+    }
+
+    .projectStoryStepImage {
+      position: relative;
+      display: block;
+      max-width: 38rem;
+      aspect-ratio: 1.6;
+      margin-top: 1.5rem;
+      overflow: hidden;
+      border-radius: 1rem;
+      background: $color-text;
+
+      img {
+        object-fit: cover;
+      }
+    }
+  }
+
+  @media (max-width: 47.5rem) {
+    .projectStory {
+      padding-top: 3.5rem;
+    }
+
+    .projectStoryStep {
+      padding-left: 1rem;
+
+      p {
+        font-size: $font-size-medium-large;
+      }
+    }
+  }
+}

@@ -76,28 +76,34 @@ export const Hero = ({ content }: { content?: HomeSectionContent }) => {
         </div>
       </div>
       <div className="heroImage">
-        <div className="heroImageMain">
-          {content?.heroImageUrl !== null && (
-            <Image
-              src={content?.heroImageUrl || "/images/hero/branding.webp"}
-              alt="Identidad visual con papelería, packaging y tarjetas en azul, verde y terracota"
-              fill
-              sizes="(max-width: 47.5rem) 90vw, (max-width: 80rem) 46vw, 34.75rem"
-              priority
-              unoptimized={content?.heroImageUrl?.startsWith("blob:")}
-            />
-          )}
+        <div className="heroImageMainMotion">
+          <div className="heroImageMain">
+            {content?.heroImageUrl !== null && (
+              <Image
+                src={content?.heroImageUrl || "/images/hero/branding.webp"}
+                alt="Identidad visual con papelería, packaging y tarjetas en azul, verde y terracota"
+                fill
+                sizes="(max-width: 47.5rem) 90vw, (max-width: 80rem) 46vw, 34.75rem"
+                priority
+                unoptimized={content?.heroImageUrl?.startsWith("blob:")}
+              />
+            )}
+          </div>
         </div>
-        <div className="heroImageDetail">
-          {content?.heroDetailImageUrl !== null && (
-            <Image
-              src={content?.heroDetailImageUrl || "/images/hero/moodboard.webp"}
-              alt="Moodboard creativo de fotografía, gastronomía y diseño de marca"
-              fill
-              sizes="(max-width: 47.5rem) 7.5rem, 9rem"
-              unoptimized={content?.heroDetailImageUrl?.startsWith("blob:")}
-            />
-          )}
+        <div className="heroImageDetailMotion">
+          <div className="heroImageDetail">
+            {content?.heroDetailImageUrl !== null && (
+              <Image
+                src={
+                  content?.heroDetailImageUrl || "/images/hero/moodboard.webp"
+                }
+                alt="Moodboard creativo de fotografía, gastronomía y diseño de marca"
+                fill
+                sizes="(max-width: 47.5rem) 7.5rem, 9rem"
+                unoptimized={content?.heroDetailImageUrl?.startsWith("blob:")}
+              />
+            )}
+          </div>
         </div>
       </div>
     </section>

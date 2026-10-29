@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type MouseEvent, useRef, useState } from "react";
+import { type MouseEvent, useEffect, useRef, useState } from "react";
+import { ProjectsNavMenu } from "./ProjectsNavMenu";
 import "./_navbar.scss";
 import { useNavbarGsap } from "./navbar.gsap";
 
@@ -18,13 +19,51 @@ export const Navbar = () => {
   useNavbarGsap(navbarRef);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const [projectsOpenAtPath, setProjectsOpenAtPath] = useState<string | null>(
+    null,
+  );
+  const isProjectsOpen = projectsOpenAtPath === pathname;
+  const projectsButtonRef = useRef<HTMLAnchorElement>(null);
 
   const closeMenu = () => setIsOpen(false);
+  const closeProjects = () => setProjectsOpenAtPath(null);
+  const openProjects = () => {
+    closeMenu();
+    setProjectsOpenAtPath(pathname);
+  };
+  useEffect(() => {
+    if (!isProjectsOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (
+        event.target instanceof Node &&
+        !navbarRef.current?.contains(event.target)
+      ) {
+        closeProjects();
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeProjects();
+        projectsButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isProjectsOpen]);
   const isCurrentRoute = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
   const handleLogoClick = (event: MouseEvent<HTMLAnchorElement>) => {
     closeMenu();
+    closeProjects();
 
     if (
       event.button !== 0 ||
@@ -50,13 +89,14 @@ export const Navbar = () => {
   };
 
   return (
-    <header ref={navbarRef} className="navbar">
+    <header ref={navbarRef} className="navbar" onMouseLeave={closeProjects}>
       <div className="navbarInner">
         <Link
           className="navbarLogo"
           href="/"
           aria-label="Hello, inicio"
           onClick={handleLogoClick}
+          onMouseEnter={closeProjects}
         >
           hello<span>.</span>
         </Link>
@@ -65,12 +105,35 @@ export const Navbar = () => {
           {navigationLinks.map(({ label, href }) => {
             const isActive = isCurrentRoute(href);
 
+            if (href === "/proyectos") {
+              return (
+                <Link
+                  ref={projectsButtonRef}
+                  className={
+                    isActive || isProjectsOpen ? "isActive" : undefined
+                  }
+                  href={href}
+                  key={href}
+                  aria-expanded={isProjectsOpen}
+                  aria-controls="projects-nav-preview"
+                  aria-current={isActive ? "page" : undefined}
+                  onMouseEnter={openProjects}
+                  onFocus={openProjects}
+                >
+                  {label}
+                </Link>
+              );
+            }
+
             return (
               <Link
                 className={isActive ? "isActive" : undefined}
                 href={href}
                 key={href}
                 aria-current={isActive ? "page" : undefined}
+                data-no-page-transition
+                onClick={closeProjects}
+                onMouseEnter={closeProjects}
               >
                 {label}
               </Link>
@@ -78,7 +141,13 @@ export const Navbar = () => {
           })}
         </nav>
 
-        <Link className="navbarContactButton" href="/contacto">
+        <Link
+          className="navbarContactButton"
+          href="/contacto"
+          data-no-page-transition
+          onClick={closeProjects}
+          onMouseEnter={closeProjects}
+        >
           Hablemos
         </Link>
 
@@ -88,12 +157,17 @@ export const Navbar = () => {
           aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={isOpen}
           aria-controls="mobile-navigation"
-          onClick={() => setIsOpen((currentValue) => !currentValue)}
+          onClick={() => {
+            closeProjects();
+            setIsOpen((currentValue) => !currentValue);
+          }}
         >
           <span />
           <span />
         </button>
       </div>
+
+      <ProjectsNavMenu isOpen={isProjectsOpen} onNavigate={closeProjects} />
 
       <div
         className={`navbarMobileMenu ${isOpen ? "isOpen" : ""}`}
@@ -104,6 +178,26 @@ export const Navbar = () => {
           {navigationLinks.map(({ label, href }) => {
             const isActive = isCurrentRoute(href);
 
+            if (href === "/proyectos") {
+              return (
+                <Link
+                  className={
+                    isActive || isProjectsOpen ? "isActive" : undefined
+                  }
+                  href={href}
+                  key={href}
+                  tabIndex={isOpen ? 0 : -1}
+                  aria-current={isActive ? "page" : undefined}
+                  onClick={() => {
+                    closeMenu();
+                    closeProjects();
+                  }}
+                >
+                  {label}
+                </Link>
+              );
+            }
+
             return (
               <Link
                 className={isActive ? "isActive" : undefined}
@@ -111,7 +205,11 @@ export const Navbar = () => {
                 key={href}
                 tabIndex={isOpen ? 0 : -1}
                 aria-current={isActive ? "page" : undefined}
-                onClick={closeMenu}
+                data-no-page-transition
+                onClick={() => {
+                  closeMenu();
+                  closeProjects();
+                }}
               >
                 {label}
               </Link>

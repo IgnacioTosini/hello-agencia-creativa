@@ -10,6 +10,7 @@ import { describeInvalidForm, describeZodIssues } from "@/lib/form-validation";
 import type { InquiryFormData } from "@/types/inquiry";
 import "./_contact.scss";
 import { useContactFormGsap } from "./contact.gsap";
+import { ContactSuccess } from "./ContactSuccess";
 
 export const ContactForm = ({
   initialService,
@@ -79,7 +80,6 @@ export const ContactForm = ({
       }
 
       setSubmitted(true);
-      toast.success("Recibimos tu consulta. Te vamos a contactar pronto.");
     } catch (error) {
       const message =
         error instanceof Error
@@ -104,110 +104,131 @@ export const ContactForm = ({
         void submitInquiry();
       }}
     >
-      <label>
-        <span>
-          Nombre <RequiredMark />
-        </span>
-        <input
-          name="name"
-          data-field-label="Nombre"
-          minLength={2}
-          required
-          value={form.name}
-          onChange={(event) => updateField("name", event.target.value)}
+      {submitted ? (
+        <ContactSuccess
+          name={form.name}
+          onReset={() => {
+            setSubmitted(false);
+            setFormError("");
+            setForm({
+              name: "",
+              email: "",
+              whatsapp: "",
+              brandName: "",
+              serviceSlug: initialService ?? "",
+              budget: budgetOptions[0] ?? "",
+              message: "",
+              source: diagnosticSubmissionId ? "DIAGNOSTIC" : "CONTACT_FORM",
+              diagnosticSubmissionId,
+            });
+          }}
         />
-      </label>
-      <label>
-        <span>
-          Email <RequiredMark />
-        </span>
-        <input
-          name="email"
-          data-field-label="Email"
-          required
-          type="email"
-          value={form.email}
-          onChange={(event) => updateField("email", event.target.value)}
-        />
-      </label>
-      <label>
-        WhatsApp
-        <input
-          name="whatsapp"
-          data-field-label="WhatsApp"
-          value={form.whatsapp}
-          onChange={(event) => updateField("whatsapp", event.target.value)}
-        />
-      </label>
-      <label>
-        Nombre de la marca
-        <input
-          name="brandName"
-          data-field-label="Nombre de la marca"
-          value={form.brandName}
-          onChange={(event) => updateField("brandName", event.target.value)}
-        />
-      </label>
-      <label>
-        Servicio de interés
-        <select
-          name="serviceSlug"
-          data-field-label="Servicio de interés"
-          value={form.serviceSlug}
-          onChange={(event) => updateField("serviceSlug", event.target.value)}
-        >
-          <option value="">Seleccionar</option>
-          {services
-            .filter((service) => service.active)
-            .sort((a, b) => a.displayOrder - b.displayOrder)
-            .map((service) => (
-              <option key={service.id} value={service.slug}>
-                {service.name}
-              </option>
-            ))}
-        </select>
-      </label>
-      <label>
-        Presupuesto aproximado
-        <select
-          name="budget"
-          data-field-label="Presupuesto aproximado"
-          value={form.budget}
-          onChange={(event) => updateField("budget", event.target.value)}
-        >
-          {budgetOptions.map((budget) => (
-            <option key={budget} value={budget}>
-              {budget}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="contactFormMessage">
-        Mensaje
-        <textarea
-          name="message"
-          data-field-label="Mensaje"
-          placeholder="¿Qué está pasando hoy con tu marca?"
-          value={form.message}
-          onChange={(event) => updateField("message", event.target.value)}
-        />
-      </label>
-      {formError && (
-        <p className="formValidationSummary" aria-live="polite">
-          {formError}
-        </p>
+      ) : (
+        <>
+          <label>
+            <span>
+              Nombre <RequiredMark />
+            </span>
+            <input
+              name="name"
+              data-field-label="Nombre"
+              minLength={2}
+              required
+              value={form.name}
+              onChange={(event) => updateField("name", event.target.value)}
+            />
+          </label>
+          <label>
+            <span>
+              Email <RequiredMark />
+            </span>
+            <input
+              name="email"
+              data-field-label="Email"
+              required
+              type="email"
+              value={form.email}
+              onChange={(event) => updateField("email", event.target.value)}
+            />
+          </label>
+          <label>
+            WhatsApp
+            <input
+              name="whatsapp"
+              data-field-label="WhatsApp"
+              value={form.whatsapp}
+              onChange={(event) => updateField("whatsapp", event.target.value)}
+            />
+          </label>
+          <label>
+            Nombre de la marca
+            <input
+              name="brandName"
+              data-field-label="Nombre de la marca"
+              value={form.brandName}
+              onChange={(event) => updateField("brandName", event.target.value)}
+            />
+          </label>
+          <label>
+            Servicio de interés
+            <select
+              name="serviceSlug"
+              data-field-label="Servicio de interés"
+              value={form.serviceSlug}
+              onChange={(event) =>
+                updateField("serviceSlug", event.target.value)
+              }
+            >
+              <option value="">Seleccionar</option>
+              {services
+                .filter((service) => service.active)
+                .sort((a, b) => a.displayOrder - b.displayOrder)
+                .map((service) => (
+                  <option key={service.id} value={service.slug}>
+                    {service.name}
+                  </option>
+                ))}
+            </select>
+          </label>
+          <label>
+            Presupuesto aproximado
+            <select
+              name="budget"
+              data-field-label="Presupuesto aproximado"
+              value={form.budget}
+              onChange={(event) => updateField("budget", event.target.value)}
+            >
+              {budgetOptions.map((budget) => (
+                <option key={budget} value={budget}>
+                  {budget}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="contactFormMessage">
+            Mensaje
+            <textarea
+              name="message"
+              data-field-label="Mensaje"
+              placeholder="¿Qué está pasando hoy con tu marca?"
+              value={form.message}
+              onChange={(event) => updateField("message", event.target.value)}
+            />
+          </label>
+          {formError && (
+            <p className="formValidationSummary" aria-live="polite">
+              {formError}
+            </p>
+          )}
+          <p className="contactFormPrivacy">
+            Al enviar la consulta aceptás el tratamiento de tus datos según
+            nuestra <Link href="/privacidad">Política de privacidad</Link>.
+          </p>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Enviando…" : "Enviar consulta ✈"}
+          </button>
+        </>
       )}
-      <p className="contactFormPrivacy">
-        Al enviar la consulta aceptás el tratamiento de tus datos según nuestra{" "}
-        <Link href="/privacidad">Política de privacidad</Link>.
-      </p>
-      <button type="submit" disabled={isSubmitting || submitted}>
-        {isSubmitting
-          ? "Enviando…"
-          : submitted
-            ? "Consulta enviada ✓"
-            : "Enviar consulta ✈"}
-      </button>
     </form>
   );
 };

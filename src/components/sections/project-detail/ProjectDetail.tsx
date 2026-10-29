@@ -4,6 +4,7 @@ import { useRef } from "react";
 import type { ProjectViewModel } from "@/types/project";
 import { projectCategoryLabel } from "@/types/project";
 import { ProjectGallery } from "./ProjectGallery";
+import { ProjectStory } from "./ProjectStory";
 import { ProjectVideo } from "./ProjectVideo";
 import "./_project-detail.scss";
 import { useProjectDetailGsap } from "./project-detail.gsap";
@@ -58,51 +59,7 @@ export const ProjectDetail = ({ project }: { project: ProjectViewModel }) => {
             />
           </div>
         )}
-        <section className="projectStory" aria-labelledby="project-story-title">
-          <div className="projectStoryLead">
-            <h2 id="project-story-title">El caso, de punta a punta.</h2>
-            <div className="projectExternalLinks">
-              {project.instagramUrl && (
-                <a
-                  className="projectInstagram"
-                  href={project.instagramUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Ver proyecto en Instagram <span aria-hidden="true">↗</span>
-                </a>
-              )}
-              {project.websiteUrl && (
-                <a
-                  className="projectInstagram"
-                  href={project.websiteUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Visitar sitio <span aria-hidden="true">↗</span>
-                </a>
-              )}
-            </div>
-          </div>
-          <div>
-            <article>
-              <h3>El desafío</h3>
-              <p>{project.challenge}</p>
-            </article>
-            <article>
-              <h3>El enfoque de Hello</h3>
-              <p>{project.approach}</p>
-            </article>
-            <article>
-              <h3>La solución</h3>
-              <p>{project.solution}</p>
-            </article>
-            <article>
-              <h3>Resultados y entregables</h3>
-              <p>{project.results}</p>
-            </article>
-          </div>
-        </section>
+        <ProjectStory project={project} coverUrl={coverUrl} />
         {project.videoUrl && (
           <ProjectVideo
             title={project.title}

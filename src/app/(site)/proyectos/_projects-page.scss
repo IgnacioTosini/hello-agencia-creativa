@@ -2,7 +2,7 @@
 
 .projectsPage {
   min-height: 100svh;
-  padding: 7rem max(2rem, calc((100% - 70.75rem) / 2)) 5rem;
+  padding: 5.5rem max(2rem, calc((100% - 70.75rem) / 2)) 5rem;
   background:
     radial-gradient(
       ellipse at 0% 10%,
@@ -17,7 +17,7 @@
     $hero-background-color;
 
   .projectsPageHero {
-    max-width: 54rem;
+    max-width: 62rem;
 
     p {
       color: $color-text-tertiary;
@@ -26,9 +26,10 @@
     }
 
     h1 {
-      margin-top: 1.75rem;
+      max-width: 61rem;
+      margin-top: 1.25rem;
       color: $color-text;
-      font-size: clamp(3.25rem, 5vw, 4.5rem);
+      font-size: clamp(3.25rem, 5vw, 4.25rem);
       font-weight: $font-weight-bold;
       letter-spacing: -0.125rem;
       line-height: 1.03;
@@ -36,8 +37,8 @@
 
     span {
       display: block;
-      max-width: 44rem;
-      margin-top: 2rem;
+      max-width: 48rem;
+      margin-top: 1.5rem;
       color: $color-text-secondary;
       font-size: $font-size-medium-large;
       line-height: 1.75;
@@ -48,7 +49,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-top: 3rem;
+    margin-top: 2.5rem;
   }
 
   .projectFilters button {
@@ -78,8 +79,10 @@
   .projectsCatalogGrid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-content: start;
     gap: 1.5rem;
     margin-top: 2.25rem;
+    overflow-anchor: none;
   }
 
   .projectsEmpty {

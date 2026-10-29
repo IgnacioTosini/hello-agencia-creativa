@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useProjectsStore } from "@/hooks/useProjectsStore";
 import type { ProjectCategory } from "@/types/project";
 import { ProjectCard } from "./ProjectCard";
 import { useProjectsCatalogGsap } from "./projects-catalog.gsap";
+import { useProjectsFilterGsap } from "./projects-filter.gsap";
 
 const filters: Array<{ label: string; value: ProjectCategory | "ALL" }> = [
   { label: "Todos", value: "ALL" },
@@ -18,17 +19,10 @@ const filters: Array<{ label: string; value: ProjectCategory | "ALL" }> = [
 
 export const ProjectsCatalog = () => {
   const { projects } = useProjectsStore();
-  const [activeFilter, setActiveFilter] = useState<ProjectCategory | "ALL">(
-    "ALL",
-  );
-  const visibleProjects = projects
-    .filter((project) => project.status === "PUBLISHED")
-    .filter(
-      (project) => activeFilter === "ALL" || project.category === activeFilter,
-    )
-    .sort((a, b) => a.displayOrder - b.displayOrder);
   const catalogRef = useRef<HTMLDivElement>(null);
-  useProjectsCatalogGsap(catalogRef, activeFilter, visibleProjects.length);
+  const { activeFilter, visibleProjects, hasInteracted, changeFilter } =
+    useProjectsFilterGsap(catalogRef, projects);
+  useProjectsCatalogGsap(catalogRef, !hasInteracted, visibleProjects.length);
 
   return (
     <div ref={catalogRef} className="projectsCatalog">
@@ -39,7 +33,7 @@ export const ProjectsCatalog = () => {
             key={filter.value}
             type="button"
             aria-pressed={activeFilter === filter.value}
-            onClick={() => setActiveFilter(filter.value)}
+            onClick={() => changeFilter(filter.value)}
           >
             {filter.label}
           </button>

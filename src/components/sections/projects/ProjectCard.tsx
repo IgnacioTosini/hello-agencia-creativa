@@ -7,7 +7,7 @@ export const ProjectCard = ({ project }: { project: ProjectCardData }) => {
     project.images.find((image) => image.type === "COVER") ?? project.images[0];
 
   return (
-    <article className="projectCard">
+    <article className="projectCard" data-project-id={project.id}>
       <a className="projectCardImage" href={`/proyectos/${project.slug}`}>
         {cover ? (
           <ProjectImage

@@ -6,7 +6,8 @@ export function useNavbarGsap(scope: RefObject<HTMLElement | null>) {
     start: "top 100%",
     groups: [
       {
-        selector: ".navbarLogo, .navbarDesktopNav a, .navbarMenuButton",
+        selector:
+          ".navbarLogo, .navbarDesktopNav a, .navbarDesktopNav button, .navbarMenuButton",
         from: { y: -14 },
         stagger: 0.055,
       },
